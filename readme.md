@@ -86,15 +86,14 @@ $rosrun my_robot_controller my_first_node.py
 |Livestream of ROS topic messages | `rostopic echo /turtle1/pose`|
 | Frequencies of Topics | `rostopic hz /turtle1/pose`|
 
+## Create ROS Publisher
+
 Get Message format to publish to turtle sim:
 ```
 $rostopic list # to get topic that the listener is subscribed to
 $rostopic info /cmd_vel # to get the data type of the topic
 $rosmsg show geometry_msg/Twist # to inspect the message format
 ```
-
-## Create ROS Publisher
-
 Publisher Python Script:
 ```
 #!/usr/bin/env python3
