@@ -1,12 +1,10 @@
-# ROS Tutorials
+# [ROS Tutorials in Python](https://www.youtube.com/watch?v=wfDJAYTMTdk)
 
 ## Setup on Ubuntu 20.04 using following links
 
-For setting up ROS Noetic:
-http://wiki.ros.org/noetic/Installation/Ubuntu
+* [For setting up ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
 
-For setting up Ardupilot:
-https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/installing_ros_20_04.md
+* [For setting up Ardupilot](https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/installing_ros_20_04.md)
 
 
 ## Graph View
@@ -47,7 +45,8 @@ $rosrun turtlesim turtle_teleop_key
 Create Catkin Workspace
 ```
 $mkdir -p catkin_ws/src
-$ls catkin_ws
+$cd catkin_ws
+$catkin init
 $catkin_make # create build develop and source spaces
 $source catkin_ws/devel/setup.bash
 $echo "source ~/Document/catkin_ws/devel/setup.bash" >> ~/.bashrc
@@ -251,3 +250,108 @@ Only call the service at specific condition:
     # publish code
 ```
 
+# [ROS Course (ETH Zurich)](https://www.youtube.com/playlist?list=PLE-BQwvVGf8HOvwXPgtDfWoxd4Cc6ghiP)
+
+Clone [this repository](https://github.com/leggedrobotics/ros_best_practices) into your catkin workspace:
+
+> Can clone this directly into `catkin/src` or just separate directory and symlink it.
+
+Build the package:
+```
+$catkin build ros_package_template
+```
+Resource the workspace setup:
+```
+$source devel/setup.bash
+```
+Launch the node:
+```
+$roslaunch ros_package_template ros_package_template.launch
+```
+> `launch` is a tool (in xml format) for launching multiple nodes (along with `roscore` if it is not already running) as well as setting parameters.
+
+## ROS Packages
+`package.xml` file defines the properties of the package
+* Package name
+* Version number
+* Authors
+* Dependencies on other packages
+* Etc...
+
+```
+<?xml version="1.0"?>
+<package format="2">
+  <name>ros_package_template</name>
+  <version>0.1.0</version>
+  <description>A template for ROS packages.</description>
+  <maintainer email="pfankhauser@anybotics.com">Peter Fankhauser</maintainer>
+  <license>BSD</license>
+  <url type="website">https://github.com/ethz-asl/ros_best_practices</url>
+  <url type="bugtracker">https://github.com/ethz-asl/ros_best_practices/issues</url>
+  <author email="pfankhauser@anybotics.com">Peter Fankhauser</author>
+
+  <!-- buildtool_depend: dependencies of the build process -->
+  <buildtool_depend>catkin</buildtool_depend>
+  <!-- build_depend: dependencies only used in source files -->
+  <build_depend>boost</build_depend>
+  <!-- depend: build, export, and execution dependency -->
+  <depend>eigen</depend>
+  <depend>roscpp</depend>
+  <depend>sensor_msgs</depend>
+
+  <build_depend>roslint</build_depend>
+</package>
+
+```
+
+## CMakeLists.xml
+
+For configuring the CMake build system
+
+|Description|Field|Notes|
+|-----|-----|----|
+| `cmake_minimum_required`| Required CMake version 
+| `project` | Package Name | Usually the same name as `package.xml`
+| `find_package`| Find other CMake/Catkin packages needed for build
+| `add_message_files`, `add_service_files`, `add_action_files` | Message/Service/Action generators|
+| `generate_messages` | Invoke message/service/action generation|
+| `catkin_package` | Package build export information |`INCLUDE_DIRS`, `LIBRARIES`, `CATKIN_DEPENDS`, `DEPENDS`
+| `add_library`, `add_executables`, `target_link_libraries` | Libraries/Executables to build|
+| `include_directories` | Location of Header files|
+| `catkin_add_gtest` | Tests to build|
+| `install` | Install rules|
+
+## Node Handles
+
+4 main types of Node Handles
+
+|Type|Code|Topic Lookup|Notes|
+|-----|-----|----|----|
+| Default| `nh_ = ros::NodeHandle();`|`/namespace/topic`| Recommended 
+| Private| `nh_private_ = ros::NodeHandle("~");`|`/namespace/node/topic/`| Recommended 
+| Namespaced| `nh_eth_ = ros::NodeHandle("eth")`|`/namespace/eth/topic`|  
+| Global| `nh_global_ = ros::NodeHandle("/")`|`/topic`| **Not** Recommended
+
+> In C++, you need `NodeHandle` to get instances of Publishers and Subscribers whereas in Python, you can call `rospy` library directly.
+
+## Parameter Server
+
+Nodes can use *parameter server* to store and retrieve configuration parameters at runtime. The parameters are defined in separate YAML files, and configured in `package.launch` file.
+
+|Description|Field|C++ Code|
+|-----|-----|-----|
+| List all parameters| `rosparam list` 
+| Get value of parameter | `rosparam get parameter_name` | `nodeHandle.getParam(param_name, variable)`|
+| Set parameter| `rosparam set parameter_name value`
+
+> For parameters, typically use private node handler `ros::NodeHandle("~")`.
+
+## Transformation System
+
+Keeps track of coordinate frames over time, and lets users transform points, vectors, etc. It is implemented as publisher-subscriber model on topics `/tf` and `tf/static`.
+
+|Tool|Command||
+|-----|-----|-----|
+| Print information about the current transform tree| `$rosrun tf tf_monitor` 
+| Print information about the transform between 2 frames | `$rosrun tf tf_echo source_frame target_frame` ||
+| Create visual Graph of the transform tree| `$rosrun tf view_frames`
