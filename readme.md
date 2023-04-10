@@ -54,13 +54,12 @@ $ echo "source ~/Document/catkin_ws/devel/setup.bash" >> ~/.bashrc
 
 Create ROS Package
 ```
-# important for package creator to link to the newly created package
-$ source ~/.bashrc
-
 $ cd ~/Documents/catkin_ws/src
 $ catkin_create_pkg my_robot_controller rospy roscpp turtle_sim
-$ code . # open in vs code
 $ cd .. && catkin clean && catkin_make
+
+# important for package creator to link to the newly created package
+$ source ~/.bashrc
 ```
 
 Create ROS Node
@@ -252,7 +251,7 @@ Only call the service at specific condition:
 
 # [ROS Course (ETH Zurich)](https://www.youtube.com/playlist?list=PLE-BQwvVGf8HOvwXPgtDfWoxd4Cc6ghiP)
 
-Clone [this repository](https://github.com/leggedrobotics/ros_best_practices) into your catkin workspace:
+Clone [this repository](https://github.com/leggedrobotics/ros_best_practices) into your catkin workspace.
 
 > Can clone this directly into `catkin/src` or just separate directory and symlink it.
 
@@ -311,7 +310,7 @@ For configuring the CMake build system
 |Description|Field|Notes|
 |-----|-----|----|
 | `cmake_minimum_required`| Required CMake version 
-| `project` | Package Name | Usually the same name as `package.xml`
+| `project` | Package Name | Usually the same value as `<name>` in `package.xml`
 | `find_package`| Find other CMake/Catkin packages needed for build
 | `add_message_files`, `add_service_files`, `add_action_files` | Message/Service/Action generators|
 | `generate_messages` | Invoke message/service/action generation|
@@ -396,10 +395,39 @@ $ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
 
 Change the launch file to load a different world:
 ```
-# Replace this with
+# Replace this 
 <arg name="world_name" default="worlds/empty.world"/>
 
-# This new line
+# With this new line
 <arg name="world_name" default="worlds/robocup14_spl_field.world"/>
 
+```
+
+## Creating Package from Scratch
+
+Create new package with dependencies `roscpp` and `sensor_msgs`, and then inspect the `package.xml` and `CMakelists.txt`:
+```
+$ cd ~/catkin_ws/src # important to create inside src!
+$ catkin_create_pkg eth_exercise roscpp sensor_msgs
+$ catkin build
+$ source ~/.bashrc # to link the command line to newly compiled packages
+```
+
+> You can clone and build `ros_best_practices` from [the first part of the ROS course](#ros-course-eth-zurich), and use it as a reference.
+
+
+Add/Uncomment the following chunk in `CMakelists.txt` to register into dependency tree:
+```
+catkin_package(
+ INCLUDE_DIRS include
+ CATKIN_DEPENDS roscpp sensor_msgs
+)
+```
+
+Add/Uncomment the following chunk in `CMakelists.txt` to register source codes to be compiled:
+```
+## Declare a C++ library
+add_library(${PROJECT_NAME}
+  src/${PROJECT_NAME}/eth_exercise.cpp
+)
 ```
