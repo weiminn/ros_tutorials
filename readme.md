@@ -12,64 +12,64 @@
 ROS Master:
 
 ```
-$roscore
+$ roscore
 ```
 
 ROS Node:
 ```
-$rosrun rospy_tutorials talker
+$ rosrun rospy_tutorials talker
 ```
 
 ROS Another Node:
 
 ```
-$rosrun rospy_tutorials listener
+$ rosrun rospy_tutorials listener
 ```
 
 ROS Graph View:
 
 ```
-$rqt_graph
+$ rqt_graph
 ```
 
 ## Turtle Sim with Manual Control Command
 
 ```
-$roscore
-$rosrun turtlesim turtlesim_node 
-$rosrun turtlesim turtle_teleop_key
+$ roscore
+$ rosrun turtlesim turtlesim_node 
+$ rosrun turtlesim turtle_teleop_key
 ```
 
 ## Create ROS Package
 
 Create Catkin Workspace
 ```
-$mkdir -p catkin_ws/src
-$cd catkin_ws
-$catkin init
-$catkin_make # create build develop and source spaces
-$source catkin_ws/devel/setup.bash
-$echo "source ~/Document/catkin_ws/devel/setup.bash" >> ~/.bashrc
+$ mkdir -p catkin_ws/src
+$ cd catkin_ws
+$ catkin init
+$ catkin_make # create build develop and source spaces
+$ source catkin_ws/devel/setup.bash
+$ echo "source ~/Document/catkin_ws/devel/setup.bash" >> ~/.bashrc
 ```
 
 Create ROS Package
 ```
 # important for package creator to link to the newly created package
-$source ~/.bashrc
+$ source ~/.bashrc
 
-$cd ~/Documents/catkin_ws/src
-$catkin_create_pkg my_robot_controller rospy roscpp turtle_sim
-$code . # open in vs code
-$cd .. && catkin clean && catkin_make
+$ cd ~/Documents/catkin_ws/src
+$ catkin_create_pkg my_robot_controller rospy roscpp turtle_sim
+$ code . # open in vs code
+$ cd .. && catkin clean && catkin_make
 ```
 
 Create ROS Node
 ```
-$cd ~/Documents/catkin_ws/src/my_robot_controller
-$mkdir scripts && cd scripts
-$sudo nano my_first_node.py # with #!/usr/bin/env python3 at the top!
-$chmod +x my_first_node.py # important for ROS to run the script
-$rosrun my_robot_controller my_first_node.py 
+$ cd ~/Documents/catkin_ws/src/my_robot_controller
+$ mkdir scripts && cd scripts
+$ sudo nano my_first_node.py # with #!/usr/bin/env python3 at the top!
+$ chmod +x my_first_node.py # important for ROS to run the script
+$ rosrun my_robot_controller my_first_node.py 
 
 ```
 
@@ -77,21 +77,21 @@ $rosrun my_robot_controller my_first_node.py
 
 | Description | Command | Note |
 |-------------------|------|------|
-| List Nodes | `$rosnode list`   | `/rosout` will be a staple  |
-| Kill node | `rosnode kill /node_to_kill`| 
-| List topics| `rostopic list` | Nodes don't talk to each other; they just publish to and listen to topics|
-|Get topic info | `rostopic info /chatter` |
-|Inspect ROS Message format | `rosmsg show turtlesim/pose` |
-|Livestream of ROS topic messages | `rostopic echo /turtle1/pose`|
-| Frequencies of Topics | `rostopic hz /turtle1/pose`|
+| List Nodes | `$ rosnode list`   | `/rosout` will be a staple  |
+| Kill node | `$ rosnode kill /node_to_kill`| 
+| List topics| `$ rostopic list` | Nodes don't talk to each other; they just publish to and listen to topics|
+|Get topic info | `$ rostopic info /chatter` |
+|Inspect ROS Message format | `$ rosmsg show turtlesim/pose` |
+|Livestream of ROS topic messages | `$ rostopic echo /turtle1/pose`|
+| Frequencies of Topics | `$ rostopic hz /turtle1/pose`|
 
 ## Create ROS Publisher
 
 Get Message format to publish to turtle sim:
 ```
-$rostopic list # to get topic that the listener is subscribed to
-$rostopic info /cmd_vel # to get the data type of the topic
-$rosmsg show geometry_msg/Twist # to inspect the message format
+$ rostopic list # to get topic that the listener is subscribed to
+$ rostopic info /cmd_vel # to get the data type of the topic
+$ rosmsg show geometry_msg/Twist # to inspect the message format
 ```
 Publisher Python Script:
 ```
@@ -127,9 +127,9 @@ if __name__ == "__main__":
 
 Get Message format of the topic to subscribe to:
 ```
-$rostopic list # to get topic that the listener is subscribed to
-$rostopic info /turtlesim/pose # to get the data type of the topic
-$rosmsg show turtlesim/Pose # case sensitive!!!
+$ rostopic list # to get topic that the listener is subscribed to
+$ rostopic info /turtlesim/pose # to get the data type of the topic
+$ rosmsg show turtlesim/Pose # case sensitive!!!
 ```
 
 Create Subscriber node:
@@ -201,11 +201,11 @@ ROS Commands for service:
 
 | Description | Command | Note |
 |-------------------|------|------|
-| Launch an ROS service|`$rosrun rospy_tutorials add_two_ints_server`|
-| List ROS services | `$rosservice list` |
-| Get arguments of a service | `$rosservice info /add_two_ints`|
-| Make client's request a service |`$rosservice call /add_two_ints "a: 0 b: 0" ` | Press tab twice to autofill the arguments|
-| Get Message Formats and Data Types of a service |`$rossrv show /add_two_ints` |
+| Launch an ROS service|`$ rosrun rospy_tutorials add_two_ints_server`|
+| List ROS services | `$ rosservice list` |
+| Get arguments of a service | `$ rosservice info /add_two_ints`|
+| Make client's request a service |`$ rosservice call /add_two_ints "a: 0 b: 0" ` | Press tab twice to autofill the arguments|
+| Get Message Formats and Data Types of a service |`$ rossrv show /add_two_ints` |
 
 Demo with Turtle Sim's services:
 ```
@@ -258,15 +258,15 @@ Clone [this repository](https://github.com/leggedrobotics/ros_best_practices) in
 
 Build the package:
 ```
-$catkin build ros_package_template
+$ catkin build ros_package_template
 ```
 Resource the workspace setup:
 ```
-$source devel/setup.bash
+$ source devel/setup.bash
 ```
 Launch the node:
 ```
-$roslaunch ros_package_template ros_package_template.launch
+$ roslaunch ros_package_template ros_package_template.launch
 ```
 > `launch` is a tool (in xml format) for launching multiple nodes (along with `roscore` if it is not already running) as well as setting parameters.
 
@@ -350,8 +350,56 @@ Nodes can use *parameter server* to store and retrieve configuration parameters 
 
 Keeps track of coordinate frames over time, and lets users transform points, vectors, etc. It is implemented as publisher-subscriber model on topics `/tf` and `tf/static`.
 
-|Tool|Command||
-|-----|-----|-----|
-| Print information about the current transform tree| `$rosrun tf tf_monitor` 
-| Print information about the transform between 2 frames | `$rosrun tf tf_echo source_frame target_frame` ||
-| Create visual Graph of the transform tree| `$rosrun tf view_frames`
+|Tool|Command|
+|-----|-----|
+| Print information about the current transform tree| `$rosrun tf tf_monitor` |
+| Print information about the transform between 2 frames | `$rosrun tf tf_echo source_frame target_frame` |
+| Create visual Graph of the transform tree| `$rosrun tf view_frames`|
+
+# ROS Exercises
+
+## [Simulating Husky](http://wiki.ros.org/husky_gazebo/Tutorials/Simulating%20Husky)
+
+Install Simulation Package:
+```
+$ sudo apt install ros-noetic-husky-simulator
+```
+
+Set up environmental variable HUSKY_GAZEBO_DESCRIPTION:
+```
+$ export HUSKY_GAZEBO_DESCRIPTION=$(rospack find husky_gazebo)/urdf/description.gazebo.xacro
+```
+
+Launch simulation:
+```
+# Empty world
+$ roslaunch husky_gazebo empty_world.launch
+
+# Clearpath design world
+$ roslaunch husky_gazebo husky_playpen.launch
+```
+
+Inspect ROS Nodes and their topics:
+```
+$ rosnode list
+$ rostopic list
+$ rostopic echo [TOPIC]
+$ rostopic hz [TOPIC]
+$ rqt_graph
+```
+
+Download and run `teleop_twist_keyboard` to control the robot using your keyboard:
+```
+$ sudo apt-get install ros-noetic-teleop-twist-keyboard
+$ rosrun teleop_twist_keyboard teleop_twist_keyboard.py
+```
+
+Change the launch file to load a different world:
+```
+# Replace this with
+<arg name="world_name" default="worlds/empty.world"/>
+
+# This new line
+<arg name="world_name" default="worlds/robocup14_spl_field.world"/>
+
+```
