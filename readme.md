@@ -415,19 +415,56 @@ $ source ~/.bashrc # to link the command line to newly compiled packages
 
 > You can clone and build `ros_best_practices` from [the first part of the ROS course](#ros-course-eth-zurich), and use it as a reference.
 
+Tell CMake to find other packages necessary for build:
+```
+## Recomended
+find_package(catkin REQUIRED COMPONENTS 
+  ## import below packages as components of catkin
+  roscpp
+  sensor_msgs
+)
+
+## Alternative (but not recommended):
+find_package(catkin REQUIRED) # minimum this one at least
+find_package(roscpp REQUIRED)
+find_package(sensor_msgs REQUIRED )
+
+```
+> For catkin packages, if you find_package them as components of catkin, this is advantageous as a single set of environment variables is created with the catkin_ prefix. For example, let us say you were using the package nodelet in your code.
 
 Add/Uncomment the following chunk in `CMakelists.txt` to register into dependency tree:
 ```
 catkin_package(
- INCLUDE_DIRS include
+ INCLUDE_DIRS include # for header files of your custom libraries
  CATKIN_DEPENDS roscpp sensor_msgs
 )
 ```
+> You don't have to specify those dependencies again when you build another package that depends on this package.
+> This function must be called before declaring any targets with `add_library`, or `add_executable`.
 
-Add/Uncomment the following chunk in `CMakelists.txt` to register source codes to be compiled:
+Locations of the header files of your custom libraries:
+```
+include_directories(
+  include
+  ${catkin_INCLUDE_DIRS}
+)
+```
+
+Add/Uncomment the following chunk in `CMakelists.txt` to register your custom libraries for OOP and Modular Purposes:
 ```
 ## Declare a C++ library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/eth_exercise.cpp
+)
+```
+
+Add/Uncomment the following chunk in `CMakelists.txt` to register the main executable:
+```
+## Declare a C++ executable
+## With catkin_make all packages are built within a single CMake context
+## The recommended prefix ensures that target names across packages don't collide
+add_executable(
+  ${PROJECT_NAME} 
+  src/eth_exercise_node.cpp
 )
 ```
