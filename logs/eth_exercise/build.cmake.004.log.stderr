@@ -1,0 +1,14 @@
+[31m[1mCMake Error[0m at /home/weiminn/catkin_ws/src/eth_exercise/CMakeLists.txt:123 (add_library):
+  Cannot find source file:
+
+    src/eth_exercise/src/eth_exercise.cpp
+
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
+
+
+[31m[1mCMake Error[0m at /home/weiminn/catkin_ws/src/eth_exercise/CMakeLists.txt:123 (add_library):
+  No SOURCES given to target: eth_exercise_core
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

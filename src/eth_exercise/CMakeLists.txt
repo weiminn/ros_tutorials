@@ -10,6 +10,11 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   sensor_msgs
+  nav_msgs
+  geometry_msgs
+  tf2_geometry_msgs
+  tf
+  std_srvs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -104,7 +109,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES eth_exercise
- CATKIN_DEPENDS roscpp sensor_msgs
+ CATKIN_DEPENDS roscpp sensor_msgs nav_msgs geometry_msgs tf2_geometry_msgs tf std_srvs
 #  DEPENDS system_lib
 )
 
@@ -115,13 +120,14 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-  include
+  include ## include/ directory within the package is also part of the path
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/eth_exercise.cpp
+add_library(
+  ${PROJECT_NAME}_core
+  src/${PROJECT_NAME}.cpp
 )
 
 ## Add cmake target dependencies of the library
@@ -133,7 +139,7 @@ add_library(${PROJECT_NAME}
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
-  ${PROJECT_NAME} 
+  ${PROJECT_NAME}
   src/eth_exercise_node.cpp
 )
 
@@ -151,6 +157,16 @@ add_executable(
 # target_link_libraries(${PROJECT_NAME}_node
 #   ${catkin_LIBRARIES}
 # )
+
+## Specify libraries to link executable targets against
+target_link_libraries(${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

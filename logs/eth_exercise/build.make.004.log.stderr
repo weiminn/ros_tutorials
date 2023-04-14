@@ -1,0 +1,10 @@
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `tf2_ros::Buffer::Buffer(ros::Duration, bool)'
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `tf2::BufferCore::~BufferCore()'
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `tf2_ros::TransformListener::~TransformListener()'
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `tf2_ros::TransformListener::TransformListener(tf2::BufferCore&, bool, ros::TransportHints)'
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `vtable for tf2_ros::Buffer'
+/usr/bin/ld: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so: undefined reference to `tf2::BufferCore::lookupTransform(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, ros::Time const&) const'
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/eth_exercise.dir/build.make:102: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/eth_exercise/eth_exercise] Error 1
+make[1]: *** [CMakeFiles/Makefile2:167: CMakeFiles/eth_exercise.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

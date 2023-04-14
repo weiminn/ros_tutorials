@@ -339,21 +339,21 @@ Nodes can use *parameter server* to store and retrieve configuration parameters 
 
 |Description|Field|C++ Code|
 |-----|-----|-----|
-| List all parameters| `rosparam list` 
-| Get value of parameter | `rosparam get parameter_name` | `nodeHandle.getParam(param_name, variable)`|
-| Set parameter| `rosparam set parameter_name value`
+| List all parameters| `$ rosparam list` 
+| Get value of parameter | `$ rosparam get parameter_name` | `nodeHandle.getParam(param_name, variable)`|
+| Set parameter| `$ rosparam set parameter_name value`
 
 > For parameters, typically use private node handler `ros::NodeHandle("~")`.
 
-## Transformation System
+## [Transformation System](http://wiki.ros.org/tf)
 
 Keeps track of coordinate frames over time, and lets users transform points, vectors, etc. It is implemented as publisher-subscriber model on topics `/tf` and `tf/static`.
 
 |Tool|Command|
 |-----|-----|
-| Print information about the current transform tree| `$rosrun tf tf_monitor` |
-| Print information about the transform between 2 frames | `$rosrun tf tf_echo source_frame target_frame` |
-| Create visual Graph of the transform tree| `$rosrun tf view_frames`|
+| Create visual Graph of the transform tree| `$ rosrun tf view_frames` <br/> `$ evince frames.pdf`|
+| Print information about the current transform tree| `$ rosrun tf tf_monitor` |
+| Print information about the transform between 2 frames | `$ rosrun tf tf_echo source_frame target_frame` <br/> ``$ rosrun rviz rviz -d `rospack find turtle_tf`/rviz/turtle_rviz.rviz`` |
 
 # ROS Exercises
 
@@ -405,10 +405,10 @@ Change the launch file to load a different world:
 
 ## Creating Package from Scratch
 
-Create new package with dependencies `roscpp` and `sensor_msgs`, and then inspect the `package.xml` and `CMakelists.txt`:
+Create new package with dependencies, and then inspect the `package.xml` and `CMakelists.txt`:
 ```
 $ cd ~/catkin_ws/src # important to create inside src!
-$ catkin_create_pkg eth_exercise roscpp sensor_msgs
+$ catkin_create_pkg eth_exercise roscpp sensor_msgs nav_msgs geometry_msgs tf2_geometry_msgs tf std_srvs
 $ catkin build
 $ source ~/.bashrc # to link the command line to newly compiled packages
 ```
@@ -439,7 +439,8 @@ catkin_package(
  CATKIN_DEPENDS roscpp sensor_msgs
 )
 ```
-> You don't have to specify those dependencies again when you build another package that depends on this package.
+> `CATKIN_DEPENDS` tells the other pacakges that `find_package` our package on which dependencies are being passed along.
+
 > This function must be called before declaring any targets with `add_library`, or `add_executable`.
 
 Locations of the header files of your custom libraries:
@@ -453,8 +454,9 @@ include_directories(
 Add/Uncomment the following chunk in `CMakelists.txt` to register your custom libraries for OOP and Modular Purposes:
 ```
 ## Declare a C++ library
-add_library(${PROJECT_NAME}
-  src/${PROJECT_NAME}/eth_exercise.cpp
+add_library(
+  ${PROJECT_NAME}_core # name of outputted target library folder
+  src/${PROJECT_NAME}.cpp
 )
 ```
 
@@ -464,7 +466,95 @@ Add/Uncomment the following chunk in `CMakelists.txt` to register the main execu
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(
-  ${PROJECT_NAME} 
-  src/eth_exercise_node.cpp
+  ${PROJECT_NAME} # name of outputted target executable folder
+  src/${PROJECT_NAME}_node.cpp
 )
+```
+
+Add the following chunk in `CMakelists.txt` to link the executables and libraries:
+```
+target_link_libraries(${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${PROJECT_NAME}_core
+  ${catkin_LIBRARIES}
+)
+```
+
+## Transformations
+
+### Static Transform Broadcaster
+
+Create package:
+```
+$ cd ~/catkin_ws/src
+$ catkin_create_pkg learning_tf2 tf2 tf2_ros roscpp rospy turtlesim
+$ roscd learning_tf2
+```
+
+Broadcaster code:
+```
+#include <ros/ros.h>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <cstdio>
+#include <tf2/LinearMath/Quaternion.h>
+
+
+std::string static_turtle_name;
+
+int main(int argc, char **argv)
+{
+  ros::init(argc,argv, "my_static_tf2_broadcaster");
+  if(argc != 8)
+  {
+    ROS_ERROR("Invalid number of parameters\nusage: static_turtle_tf2_broadcaster child_frame_name x y z roll pitch yaw");
+    return -1;
+  }
+  if(strcmp(argv[1],"world")==0)
+  {
+    ROS_ERROR("Your static turtle name cannot be 'world'");
+    return -1;
+
+  }
+  static_turtle_name = argv[1];
+  static tf2_ros::StaticTransformBroadcaster static_broadcaster;
+  geometry_msgs::TransformStamped static_transformStamped;
+
+  static_transformStamped.header.stamp = ros::Time::now();
+  static_transformStamped.header.frame_id = "world";
+  static_transformStamped.child_frame_id = static_turtle_name;
+  static_transformStamped.transform.translation.x = atof(argv[2]);
+  static_transformStamped.transform.translation.y = atof(argv[3]);
+  static_transformStamped.transform.translation.z = atof(argv[4]);
+  tf2::Quaternion quat;
+  quat.setRPY(atof(argv[5]), atof(argv[6]), atof(argv[7]));
+  static_transformStamped.transform.rotation.x = quat.x();
+  static_transformStamped.transform.rotation.y = quat.y();
+  static_transformStamped.transform.rotation.z = quat.z();
+  static_transformStamped.transform.rotation.w = quat.w();
+  static_broadcaster.sendTransform(static_transformStamped);
+  ROS_INFO("Spinning until killed publishing %s to world", static_turtle_name.c_str());
+  ros::spin();
+  return 0;
+};
+```
+
+Modify `CMakeLists.txt` to export and link executables:
+```
+add_executable(static_turtle_tf2_broadcaster src/static_turtle_tf2_broadcaster.cpp)
+target_link_libraries(static_turtle_tf2_broadcaster  ${catkin_LIBRARIES} )
+```
+
+Compile and run the static broadcaster:
+```
+$ catkin build
+$ source ~/.bashrc
+$ roscore
+
+# Seperate terminal tab
+$ source ~/.bashrc
+$ rosrun learning_tf2 static_turtle_tf2_broadcaster mystaticturtle 0 0 1 0 0 0
 ```

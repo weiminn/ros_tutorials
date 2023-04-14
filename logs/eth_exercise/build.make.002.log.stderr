@@ -1,0 +1,13 @@
+/usr/bin/ld: CMakeFiles/eth_exercise.dir/src/eth_exercise_node.cpp.o: in function `main':
+eth_exercise_node.cpp:(.text+0x95): undefined reference to `ros::init(int&, char**, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, unsigned int)'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x144): undefined reference to `ros::NodeHandle::NodeHandle(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::map<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::less<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > > const&)'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x18f): undefined reference to `husky_highlevel_controller::HuskyHighlevelController::HuskyHighlevelController(ros::NodeHandle&, bool)'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x194): undefined reference to `ros::spin()'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x1a8): undefined reference to `husky_highlevel_controller::HuskyHighlevelController::~HuskyHighlevelController()'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x1b7): undefined reference to `ros::NodeHandle::~NodeHandle()'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x268): undefined reference to `husky_highlevel_controller::HuskyHighlevelController::~HuskyHighlevelController()'
+/usr/bin/ld: eth_exercise_node.cpp:(.text+0x280): undefined reference to `ros::NodeHandle::~NodeHandle()'
+collect2: error: ld returned 1 exit status
+make[2]: *** [CMakeFiles/eth_exercise.dir/build.make:84: /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/eth_exercise/eth_exercise] Error 1
+make[1]: *** [CMakeFiles/Makefile2:167: CMakeFiles/eth_exercise.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2
