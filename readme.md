@@ -649,7 +649,7 @@ Create `start_demo.launch` with following contents inside:
     <param name="scale_linear" value="2" type="double"/>
     <param name="scale_angular" value="2" type="double"/>
 
-    <!-- Nodes that subscribe to the turtle's pose and broadcast transforms -->
+    <!-- Nodes that subscribe to the turtles' poses and broadcast their transforms relative to world concurrently-->
     <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
           args="/turtle1" name="turtle1_tf2_broadcaster" />
     <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
@@ -663,3 +663,169 @@ Launch the environment and observe transformation broadcast of the turtle:
 $ roslaunch learning_tf2 start_demo.launch
 $ rosrun tf tf_echo /world /turtle1
 ```
+
+### [Transformation Listener](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20listener%20%28C%2B%2B%29)
+
+Transformation listener for Turtle1 relative to Turtle2:
+```
+#include <ros/ros.h>
+#include <tf2_ros/transform_listener.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <geometry_msgs/Twist.h>
+#include <turtlesim/Spawn.h>
+
+int main(int argc, char** argv){
+    ros::init(argc, argv, "my_tf2_listener");
+
+    ros::NodeHandle node;
+
+    ros::service::waitForService("spawn");
+    ros::ServiceClient spawner =
+        node.serviceClient<turtlesim::Spawn>("spawn");
+    turtlesim::Spawn turtle;
+    turtle.request.x = 4;
+    turtle.request.y = 2;
+    turtle.request.theta = 0;
+    turtle.request.name = "turtle2";
+    spawner.call(turtle);
+
+    ros::Publisher turtle_vel =
+        node.advertise<geometry_msgs::Twist>("turtle2/cmd_vel", 10);
+
+    // buffer temporarily stores incoming transforms
+    tf2_ros::Buffer tfBuffer;
+    tf2_ros::TransformListener tfListener(tfBuffer);
+
+    ros::Rate rate(10.0);
+    while (node.ok()){
+        geometry_msgs::TransformStamped transformStamped;
+        try{
+            // retrieve transform message from buffer
+            transformStamped = tfBuffer.lookupTransform(
+                                "turtle2", // source (relative to)
+                                "turtle1", // target 
+                                ros::Time(0) // 0 for latest transform
+                                );
+        }
+        catch (tf2::TransformException &ex) {
+            ROS_WARN("%s",ex.what());
+            ros::Duration(1.0).sleep();
+            continue;
+        }
+
+        // Use the relative transformation of turtle1 to send command to turtle2
+        geometry_msgs::Twist vel_msg;
+        vel_msg.angular.z = 4.0 * atan2(transformStamped.transform.translation.y,
+                                        transformStamped.transform.translation.x);
+        vel_msg.linear.x = 0.5 * sqrt(pow(transformStamped.transform.translation.x, 2) +
+                                    pow(transformStamped.transform.translation.y, 2));
+        turtle_vel.publish(vel_msg);
+
+        rate.sleep();
+    }
+    return 0;
+};
+```
+
+Add executables path and link between compiled bin and libraries to compile in ``CMakelists.txt``, and then run `catkin build` and resource bash:
+```
+add_executable(turtle_tf2_listener src/turtle_tf2_listener.cpp)
+target_link_libraries(turtle_tf2_listener
+ ${catkin_LIBRARIES}
+)
+```
+
+Add listener node to `start_demo.launch`:
+```
+<node pkg="learning_tf2" type="turtle_tf2_listener"
+          name="listener" />
+```
+
+### [Adding a frame](http://wiki.ros.org/tf2/Tutorials/Adding%20a%20frame%20%28C%2B%2B%29)
+
+Create a new broadcaster node:
+```
+#include <ros/ros.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <tf2/LinearMath/Quaternion.h>
+
+int main(int argc, char** argv){
+    ros::init(argc, argv, "my_tf2_broadcaster");
+    ros::NodeHandle node;
+
+    tf2_ros::TransformBroadcaster tfb;
+    geometry_msgs::TransformStamped transformStamped;
+
+    // broadcast transform for carrot to be offset of turtle1
+    transformStamped.header.frame_id = "turtle1";
+    transformStamped.child_frame_id = "carrot1";
+    transformStamped.transform.translation.x = 0.0;
+    transformStamped.transform.translation.y = 2.0;
+    transformStamped.transform.translation.z = 0.0;
+    tf2::Quaternion q;
+    q.setRPY(0, 0, 0);
+    transformStamped.transform.rotation.x = q.x();
+    transformStamped.transform.rotation.y = q.y();
+    transformStamped.transform.rotation.z = q.z();
+    transformStamped.transform.rotation.w = q.w();
+
+    ros::Rate rate(10.0);
+    while (node.ok()){
+        transformStamped.header.stamp = ros::Time::now();
+        tfb.sendTransform(transformStamped);
+        rate.sleep();
+        printf("sending\n");
+    }
+
+};
+```
+
+Add executables path and link between compiled bin and libraries to compile in ``CMakelists.txt``, and then run `catkin build` and resource bash:
+```
+add_executable(frame_tf2_broadcaster src/frame_tf2_broadcaster.cpp)
+target_link_libraries(frame_tf2_broadcaster
+ ${catkin_LIBRARIES}
+)
+```
+
+Add listener node to `start_demo.launch`:
+```
+<node pkg="learning_tf2" type="frame_tf2_broadcaster"
+          name="broadcaster_frame" />
+```
+
+Change the behavior of the `turtle2` to follow `carrot1` instead of `turtle1`:
+```
+transformStamped = tfBuffer.lookupTransform(
+                    "turtle2", // source (relative to)
+                    // "turtle1", // old target 
+                    "carrot1", // new offset target 
+                    ros::Time(0) // 0 for latest transform
+                    );
+```
+
+
+### [Transfomations and Time](http://wiki.ros.org/tf2/Tutorials/tf2%20and%20time%20%28C%2B%2B%29)
+
+Make the 2nd turtle go to the where the first turtle was 3 seconds ago:
+```    
+ros::Time now = ros::Time::now();
+ros::Time past = ros::Time::now() - ros::Duration(3.0);
+
+// turtle2 goes to where turtle1 was 3 seconds ago
+transformStamped = tfBuffer.lookupTransform(
+    "turtle2", now,
+    "turtle1", past, 
+    "world", ros::Duration(1.0));
+```
+
+The advanced API with overloaded `lookupTransform` with 6 arguments:
+
+<ol>
+<li>Get the transformation from this frame</li>
+<li>at this time</li>
+<li>to this frame</li>
+<li>at this time</li>
+<li>Specify the frame that does not change over time, usually "/world"</li>
+<li>timeout for exception</li>
+</ol>

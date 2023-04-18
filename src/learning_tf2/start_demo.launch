@@ -9,10 +9,18 @@
     <param name="scale_linear" value="2" type="double"/>
     <param name="scale_angular" value="2" type="double"/>
 
-    <!-- Nodes that subscribe to the turtle's pose and broadcast transforms -->
+    <!-- Nodes that subscribe to the turtles' poses and broadcast their transforms relative to world concurrently-->
     <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
           args="/turtle1" name="turtle1_tf2_broadcaster" />
     <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
           args="/turtle2" name="turtle2_tf2_broadcaster" />
 
+    <!-- Listen to the relative transform between 2 turtles, and make turtle2 follow turtle1 -->
+    <node pkg="learning_tf2" type="turtle_tf2_listener"
+          name="listener" />
+
+    <!-- Nodes that subscribe to carrot's pose and broadcast transform relative to Turtle1 -->
+    <node pkg="learning_tf2" type="frame_tf2_broadcaster"
+          name="broadcaster_frame" />
+                
 </launch>
