@@ -22,14 +22,15 @@ int main(int argc, char **argv)
 
   }
 
-  // Name of the turtle you wanna track
+  // Name of the turtle, arbitrary for now
+  // Cos you're not tracking any running turtle instance yet
   static_turtle_name = argv[1];
 
   // Broadcaster object to send transformations over the wire
   static tf2_ros::StaticTransformBroadcaster static_broadcaster;
-  geometry_msgs::TransformStamped static_transformStamped;
 
-  // Compose messages to broadcast
+  // Content of messages to broadcast
+  geometry_msgs::TransformStamped static_transformStamped;
   static_transformStamped.header.stamp = ros::Time::now();
   static_transformStamped.header.frame_id = "world";
   static_transformStamped.child_frame_id = static_turtle_name;

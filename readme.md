@@ -485,7 +485,7 @@ target_link_libraries(${PROJECT_NAME}
 
 ## Transformations
 
-### Static Transform Broadcaster
+### [Static Transform Broadcaster](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20static%20broadcaster%20%28C%2B%2B%29)
 
 Create package:
 ```
@@ -519,10 +519,16 @@ int main(int argc, char **argv)
     return -1;
 
   }
+
+  // Name of the turtle, arbitrary for now
+  // Cos you're not tracking any running turtle instance yet
   static_turtle_name = argv[1];
+
+  // Broadcaster object to send transformations over the wire
   static tf2_ros::StaticTransformBroadcaster static_broadcaster;
   geometry_msgs::TransformStamped static_transformStamped;
 
+  // Content of messages to broadcast
   static_transformStamped.header.stamp = ros::Time::now();
   static_transformStamped.header.frame_id = "world";
   static_transformStamped.child_frame_id = static_turtle_name;
@@ -557,4 +563,103 @@ $ roscore
 # Seperate terminal tab
 $ source ~/.bashrc
 $ rosrun learning_tf2 static_turtle_tf2_broadcaster mystaticturtle 0 0 1 0 0 0
+```
+
+### [Tranformation Broadcaster](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20static%20broadcaster%20%28C%2B%2B%29)
+
+Code for Transformation Broadcaster:
+
+```
+#include <ros/ros.h>
+#include <tf2/LinearMath/Quaternion.h>
+#include <tf2_ros/transform_broadcaster.h>
+#include <geometry_msgs/TransformStamped.h>
+#include <turtlesim/Pose.h>
+
+std::string turtle_name;
+
+void poseCallback(const turtlesim::PoseConstPtr& msg){
+
+    // Broadcaster object to send transformations over the wire
+    static tf2_ros::TransformBroadcaster br;
+
+    // Metadata for message to broadcast
+    geometry_msgs::TransformStamped transformStamped;
+    transformStamped.header.stamp = ros::Time::now();
+    transformStamped.header.frame_id = "world";
+    transformStamped.child_frame_id = turtle_name;
+    
+    // Content of messages to broadcast
+    transformStamped.transform.translation.x = msg->x;
+    transformStamped.transform.translation.y = msg->y;
+    transformStamped.transform.translation.z = 0.0;
+    tf2::Quaternion q;
+    q.setRPY(0, 0, msg->theta);
+    transformStamped.transform.rotation.x = q.x();
+    transformStamped.transform.rotation.y = q.y();
+    transformStamped.transform.rotation.z = q.z();
+    transformStamped.transform.rotation.w = q.w();
+
+    br.sendTransform(transformStamped);
+}
+
+int main(int argc, char** argv){
+    ros::init(argc, argv, "my_tf2_broadcaster");
+    ros::NodeHandle private_node("~");
+
+    // get name of the turtle you wanna track
+    if(!private_node.hasParam("turtle")){
+        if(argc != 2) {
+            ROS_ERROR("need turtle name as argument");
+            return -1;
+        }
+        turtle_name = argv[1];
+    } else {
+        private_node.getParam("turtle", turtle_name);
+    }
+
+    // subscribe the pose of the turtle running
+    ros::NodeHandle node;
+    ros::Subscriber sub = node.subscribe(turtle_name+"/pose", 10, &poseCallback);
+
+    ros::spin();
+    return 0;
+}
+```
+
+Add executables path and link between compiled bin and libraries to compile in ``CMakelists.txt``, and then run `catkin build` and resource bash:
+```
+add_executable(turtle_tf2_broadcaster src/turtle_tf2_broadcaster.cpp)
+
+target_link_libraries(turtle_tf2_broadcaster
+ ${catkin_LIBRARIES}
+)
+```
+
+Create `start_demo.launch` with following contents inside:
+```
+<launch>
+    <!-- Turtlesim Node to observe pose -->
+    <node pkg="turtlesim" type="turtlesim_node" name="sim"/>
+
+    <!-- Teleop key to control the turtle -->
+    <node pkg="turtlesim" type="turtle_teleop_key" name="teleop" output="screen"/>
+
+    <!-- Axes -->
+    <param name="scale_linear" value="2" type="double"/>
+    <param name="scale_angular" value="2" type="double"/>
+
+    <!-- Nodes that subscribe to the turtle's pose and broadcast transforms -->
+    <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
+          args="/turtle1" name="turtle1_tf2_broadcaster" />
+    <node pkg="learning_tf2" type="turtle_tf2_broadcaster"
+          args="/turtle2" name="turtle2_tf2_broadcaster" />
+
+</launch>
+```
+
+Launch the environment and observe transformation broadcast of the turtle:
+```
+$ roslaunch learning_tf2 start_demo.launch
+$ rosrun tf tf_echo /world /turtle1
 ```
