@@ -4,8 +4,6 @@
 
 * [For setting up ROS Noetic](http://wiki.ros.org/noetic/Installation/Ubuntu)
 
-* [For setting up Ardupilot](https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/installing_ros_20_04.md)
-
 
 ## Graph View
 
@@ -832,9 +830,9 @@ The advanced API with overloaded `lookupTransform` with 6 arguments:
 
 <!-- ### [Sensor Messages with TF2](http://wiki.ros.org/tf2/Tutorials/Using%20stamped%20datatypes%20with%20tf2%3A%3AMessageFilter) -->
 
-## ROS for Drones
+# ROS for Drones
 
-### Set up Gazebo plugin for ArduPilot
+## Set up Gazebo plugin and Resources for ArduPilot
 
 Clone Gazebo Ardupilot Plugin (doesn't need to be into your Catkin source dir) and build it:
 ```
@@ -848,16 +846,16 @@ $ make -j4
 $ sudo make install
 ```
 
-Add `GAZEBO_MODEL_PATH=/home/weiminn/ardupilot_gazebo/models` to `~/.bashrc` before setting up Gazebo environment paths:
+After building check if `libArduPilotPlugin.so` and `libArduCopterIRLockPlugin.so` has been copied from `build` directory to `/usr/lib/x86_64-linux-gnu/gazebo`. If not, copy them in manually via `sudo`.
+
+Clone [Gazebo Models repository from OSRF](https://github.com/osrf/gazebo_models) and add `GAZEBO_MODEL_PATH=/home/weiminn/gazebo_models` to `~/.bashrc` before setting up Gazebo environment paths:
 ```
 $ echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
 $ source ~/.bashrc # run this for every open terminal
 ```
 > This command will append new models from the repo to our default models.
 
-After building copy `libArduPilotPlugin.so` and `libArduCopterIRLockPlugin.so` from `build` directory to `/usr/lib/x86_64-linux-gnu/gazebo`.
-
-### Installing MAVROS and MAVLink from source
+## Installing MAVROS and MAVLink from source
 
 Clone MAVROS and MAVLink into your Catkin source dir and build it:
 ```
@@ -877,7 +875,7 @@ $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc # if it already doesn'
 $ sudo ~/catkin_ws/src/mavros/mavros/scripts/install_geographiclib_datasets.sh
 ```
 
-### IQ Simulation ROS Package
+## IQ Simulation ROS Package
 
 ```
 cd ~/catkin_ws/src
@@ -886,7 +884,7 @@ echo "GAZEBO_MODEL_PATH=$HOME/catkin_ws/src/iq_sim/models:${GAZEBO_MODEL_PATH}" 
 ```
 >Make sure that `GAZEBO_MODEL_PATH` variable in `.bashrc` will be appended to have custom simulation models from Intelligent Quads, on top of its default `/usr/share/gazebo/models` and ArduPilot-Gazebo's models
 
-### Run ROS Simulation for Drone
+## Run ROS Simulation for Drone
 
 Start Simulation environment and ArduPilot SITL:
 ```
@@ -903,3 +901,54 @@ Launch MAVROS communication with the Drone:
 $ roslaunch iq_sim apm.launch
 ```
 You will now be able to see broadcasted ROS topics regarding telemetry from the Flight Controller and inspect them using `rostopic echo` to livestream data, `rostopic info` to check message type and `rosmsg info` to check data structure of the message.
+
+## [ROS Drone Guidance and Navigation](https://github.com/Intelligent-Quads/iq_tutorials/blob/master/docs/gnc_tutorial.md)
+
+`iq_gnc` package contains a library for MAVROS communication. For example, below function initializes the [broadcaster, subscribers and service clients to communicate to their respective modules and the required data type/format](http://wiki.ros.org/mavros) inside FCU:
+```
+# Declaration
+ros::Publisher local_pos_pub;
+ros::Publisher global_lla_pos_pub;
+ros::Publisher global_lla_pos_pub_raw;
+ros::Subscriber currentPos;
+ros::Subscriber state_sub;
+ros::ServiceClient arming_client;
+ros::ServiceClient land_client;
+ros::ServiceClient set_mode_client;
+ros::ServiceClient takeoff_client;
+ros::ServiceClient command_client;
+ros::ServiceClient auto_waypoint_pull_client;
+ros::ServiceClient auto_waypoint_push_client;
+ros::ServiceClient auto_waypoint_set_current_client;
+
+# Initialization
+int init_publisher_subscriber(ros::NodeHandle controlnode)
+{
+	std::string ros_namespace;
+	if (!controlnode.hasParam("namespace"))
+	{
+
+		ROS_INFO("using default namespace");
+	}else{
+		controlnode.getParam("namespace", ros_namespace);
+		ROS_INFO("using namespace %s", ros_namespace.c_str());
+	}
+	local_pos_pub = controlnode.advertise<geometry_msgs::PoseStamped>((ros_namespace + "/mavros/setpoint_position/local").c_str(), 10);
+	global_lla_pos_pub = controlnode.advertise<geographic_msgs::GeoPoseStamped>((ros_namespace + "/mavros/setpoint_position/global").c_str(), 10);
+	global_lla_pos_pub_raw = controlnode.advertise<mavros_msgs::GlobalPositionTarget>((ros_namespace + "/mavros/setpoint_raw/global").c_str(), 10);
+	currentPos = controlnode.subscribe<nav_msgs::Odometry>((ros_namespace + "/mavros/global_position/local").c_str(), 10, pose_cb);
+	state_sub = controlnode.subscribe<mavros_msgs::State>((ros_namespace + "/mavros/state").c_str(), 10, state_cb);
+	arming_client = controlnode.serviceClient<mavros_msgs::CommandBool>((ros_namespace + "/mavros/cmd/arming").c_str());
+	land_client = controlnode.serviceClient<mavros_msgs::CommandTOL>((ros_namespace + "/mavros/cmd/land").c_str());
+	set_mode_client = controlnode.serviceClient<mavros_msgs::SetMode>((ros_namespace + "/mavros/set_mode").c_str());
+	takeoff_client = controlnode.serviceClient<mavros_msgs::CommandTOL>((ros_namespace + "/mavros/cmd/takeoff").c_str());
+	command_client = controlnode.serviceClient<mavros_msgs::CommandLong>((ros_namespace + "/mavros/cmd/command").c_str());
+	auto_waypoint_pull_client = controlnode.serviceClient<mavros_msgs::WaypointPull>((ros_namespace + "/mavros/mission/pull").c_str());
+	auto_waypoint_push_client = controlnode.serviceClient<mavros_msgs::WaypointPush>((ros_namespace + "/mavros/mission/push").c_str());
+	auto_waypoint_set_current_client = controlnode.serviceClient<mavros_msgs::WaypointSetCurrent>((ros_namespace + "/mavros/mission/set_current").c_str());
+	return 0;
+}
+```
+
+
+### Waypoint mission
