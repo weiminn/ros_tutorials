@@ -1,7 +1,0 @@
-[31m[1mCMake Error[0m at /home/weiminn/catkin_ws/src/eth_exercise/CMakeLists.txt:136 (add_executable):
-  add_executable cannot create target "eth_exercise" because another target
-  with the same name already exists.  The existing target is a shared library
-  created in source directory "/home/weiminn/catkin_ws/src/eth_exercise".
-  See documentation for policy CMP0002 for more details.
-
-

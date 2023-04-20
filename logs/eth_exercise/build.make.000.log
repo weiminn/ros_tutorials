@@ -1,0 +1,8 @@
+[35m[1mScanning dependencies of target eth_exercise_core[0m
+[ 25%] [32mBuilding CXX object CMakeFiles/eth_exercise_core.dir/src/eth_exercise.cpp.o[0m
+[ 50%] [32m[1mLinking CXX shared library /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/libeth_exercise_core.so[0m
+[ 50%] Built target eth_exercise_core
+[35m[1mScanning dependencies of target eth_exercise[0m
+[ 75%] [32mBuilding CXX object CMakeFiles/eth_exercise.dir/src/eth_exercise_node.cpp.o[0m
+[100%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/eth_exercise/lib/eth_exercise/eth_exercise[0m
+[100%] Built target eth_exercise

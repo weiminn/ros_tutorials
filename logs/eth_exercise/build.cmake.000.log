@@ -32,13 +32,7 @@ Not searching for unused variables given on the command line.
 [36m--[0m Using Python nosetests: /usr/bin/nosetests3
 [36m--[0m catkin 0.8.10
 [36m--[0m BUILD_SHARED_LIBS is on
-[31m[1mCMake Error[0m at /home/weiminn/catkin_ws/src/eth_exercise/CMakeLists.txt:136 (add_executable):
-  add_executable cannot create target "eth_exercise" because another target
-  with the same name already exists.  The existing target is a shared library
-  created in source directory "/home/weiminn/catkin_ws/src/eth_exercise".
-  See documentation for policy CMP0002 for more details.
-
-
-[36m--[0m Configuring incomplete, errors occurred!
-See also "/home/weiminn/catkin_ws/build/eth_exercise/CMakeFiles/CMakeOutput.log".
-See also "/home/weiminn/catkin_ws/build/eth_exercise/CMakeFiles/CMakeError.log".
+[36m--[0m Using these message generators: gencpp;geneus;genlisp;gennodejs;genpy
+[36m--[0m Configuring done
+[36m--[0m Generating done
+[36m--[0m Build files have been written to: /home/weiminn/catkin_ws/build/eth_exercise

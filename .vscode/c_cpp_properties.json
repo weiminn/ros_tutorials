@@ -11,7 +11,9 @@
                 "/home/weiminn/catkin_ws/src/ros_best_practices/ros_package_template/include/**",
                 "/usr/include/**",
                 "/opt/ros/noetic/include",
-                "${workspaceFolder}/src/eth_exercise/include"
+                "${workspaceFolder}/src/eth_exercise/include",
+                "${workspaceFolder}/src/iq_gnc/include",
+                "${workspaceFolder}/devel/.private/mavros_msgs/include"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",

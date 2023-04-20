@@ -1,7 +1,4 @@
-[35m[1mScanning dependencies of target turtle_tf2_listener[0m
-[ 50%] Built target frame_tf2_broadcaster
-[ 50%] Built target static_turtle_tf2_broadcaster
-[ 62%] [32mBuilding CXX object CMakeFiles/turtle_tf2_listener.dir/src/turtle_tf2_listener.cpp.o[0m
-[ 87%] Built target turtle_tf2_broadcaster
-[100%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/turtle_tf2_listener[0m
-[100%] Built target turtle_tf2_listener
+[ 25%] Built target frame_tf2_broadcaster
+[ 62%] Built target turtle_tf2_listener
+[ 75%] Built target static_turtle_tf2_broadcaster
+[100%] Built target turtle_tf2_broadcaster

@@ -1,0 +1,2 @@
+gazebo_ros_pkgs/gazebo_ros_pkgs
+/home/weiminn/catkin_ws/devel/.private/gazebo_ros_pkgs/cmake.lock /home/weiminn/catkin_ws/devel/./cmake.lock

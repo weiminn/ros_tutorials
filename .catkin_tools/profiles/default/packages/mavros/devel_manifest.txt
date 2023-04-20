@@ -1,0 +1,21 @@
+mavros/mavros
+/home/weiminn/catkin_ws/devel/.private/mavros/cmake.lock /home/weiminn/catkin_ws/devel/./cmake.lock
+/home/weiminn/catkin_ws/devel/.private/mavros/share/mavros/cmake/mavrosConfig-version.cmake /home/weiminn/catkin_ws/devel/share/mavros/cmake/mavrosConfig-version.cmake
+/home/weiminn/catkin_ws/devel/.private/mavros/share/mavros/cmake/mavrosConfig.cmake /home/weiminn/catkin_ws/devel/share/mavros/cmake/mavrosConfig.cmake
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/libmavros.so /home/weiminn/catkin_ws/devel/lib/libmavros.so
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/libmavros_plugins.so /home/weiminn/catkin_ws/devel/lib/libmavros_plugins.so
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavwp /home/weiminn/catkin_ws/devel/lib/mavros/mavwp
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavftp /home/weiminn/catkin_ws/devel/lib/mavros/mavftp
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavsetp /home/weiminn/catkin_ws/devel/lib/mavros/mavsetp
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/checkid /home/weiminn/catkin_ws/devel/lib/mavros/checkid
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/event_launcher /home/weiminn/catkin_ws/devel/lib/mavros/event_launcher
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavros_node /home/weiminn/catkin_ws/devel/lib/mavros/mavros_node
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/gcs_bridge /home/weiminn/catkin_ws/devel/lib/mavros/gcs_bridge
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/cmake.lock /home/weiminn/catkin_ws/devel/lib/mavros/cmake.lock
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavsafety /home/weiminn/catkin_ws/devel/lib/mavros/mavsafety
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavcmd /home/weiminn/catkin_ws/devel/lib/mavros/mavcmd
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavsys /home/weiminn/catkin_ws/devel/lib/mavros/mavsys
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/mavparam /home/weiminn/catkin_ws/devel/lib/mavros/mavparam
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/mavros/install_geographiclib_datasets.sh /home/weiminn/catkin_ws/devel/lib/mavros/install_geographiclib_datasets.sh
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/python3/dist-packages/mavros/__init__.py /home/weiminn/catkin_ws/devel/lib/python3/dist-packages/mavros/__init__.py
+/home/weiminn/catkin_ws/devel/.private/mavros/lib/pkgconfig/mavros.pc /home/weiminn/catkin_ws/devel/lib/pkgconfig/mavros.pc

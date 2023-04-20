@@ -1,0 +1,14 @@
+Symlinking /home/weiminn/catkin_ws/devel/share/gazebo_ros/docs/PhysicsConfig-usage.dox
+Symlinking /home/weiminn/catkin_ws/devel/share/gazebo_ros/docs/PhysicsConfig.dox
+Symlinking /home/weiminn/catkin_ws/devel/share/gazebo_ros/docs/PhysicsConfig.wikidoc
+Symlinking /home/weiminn/catkin_ws/devel/share/gazebo_ros/cmake/gazebo_rosConfig.cmake
+Symlinking /home/weiminn/catkin_ws/devel/share/gazebo_ros/cmake/gazebo_rosConfig-version.cmake
+Symlinking /home/weiminn/catkin_ws/devel/include/gazebo_ros/PhysicsConfig.h
+Symlinking /home/weiminn/catkin_ws/devel/lib/libgazebo_ros_paths_plugin.so
+Symlinking /home/weiminn/catkin_ws/devel/lib/libgazebo_ros_api_plugin.so
+Symlinking /home/weiminn/catkin_ws/devel/lib/gazebo_ros/spawn_model
+Symlinking /home/weiminn/catkin_ws/devel/lib/gazebo_ros/cmake.lock
+Symlinking /home/weiminn/catkin_ws/devel/lib/python3/dist-packages/gazebo_ros/__init__.py
+Symlinking /home/weiminn/catkin_ws/devel/lib/python3/dist-packages/gazebo_ros/cfg/PhysicsConfig.py
+Symlinking /home/weiminn/catkin_ws/devel/lib/python3/dist-packages/gazebo_ros/cfg/__init__.py
+Symlinking /home/weiminn/catkin_ws/devel/lib/pkgconfig/gazebo_ros.pc

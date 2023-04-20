@@ -805,7 +805,7 @@ transformStamped = tfBuffer.lookupTransform(
 ```
 
 
-### [Transfomations and Time](http://wiki.ros.org/tf2/Tutorials/tf2%20and%20time%20%28C%2B%2B%29)
+### [Transfomations and Time Travel](http://wiki.ros.org/tf2/Tutorials/Time%20travel%20with%20tf2%20%28C%2B%2B%29)
 
 Make the 2nd turtle go to the where the first turtle was 3 seconds ago:
 ```    
@@ -829,3 +829,77 @@ The advanced API with overloaded `lookupTransform` with 6 arguments:
 <li>Specify the frame that does not change over time, usually "/world"</li>
 <li>timeout for exception</li>
 </ol>
+
+<!-- ### [Sensor Messages with TF2](http://wiki.ros.org/tf2/Tutorials/Using%20stamped%20datatypes%20with%20tf2%3A%3AMessageFilter) -->
+
+## ROS for Drones
+
+### Set up Gazebo plugin for ArduPilot
+
+Clone Gazebo Ardupilot Plugin (doesn't need to be into your Catkin source dir) and build it:
+```
+$ cd ~
+$ git clone https://github.com/khancyr/ardupilot_gazebo.git
+$ cd ardupilot_gazebo
+$ mkdir build
+$ cd build
+$ cmake ..
+$ make -j4
+$ sudo make install
+```
+
+Add `GAZEBO_MODEL_PATH=/home/weiminn/ardupilot_gazebo/models` to `~/.bashrc` before setting up Gazebo environment paths:
+```
+$ echo 'source /usr/share/gazebo/setup.sh' >> ~/.bashrc
+$ source ~/.bashrc # run this for every open terminal
+```
+> This command will append new models from the repo to our default models.
+
+After building copy `libArduPilotPlugin.so` and `libArduCopterIRLockPlugin.so` from `build` directory to `/usr/lib/x86_64-linux-gnu/gazebo`.
+
+### Installing MAVROS and MAVLink from source
+
+Clone MAVROS and MAVLink into your Catkin source dir and build it:
+```
+$ cd ~/catkin_ws
+$ wstool init ~/catkin_ws/src
+
+$ rosinstall_generator --upstream mavros | tee /tmp/mavros.rosinstall
+$ rosinstall_generator mavlink | tee -a /tmp/mavros.rosinstall
+$ wstool merge -t src /tmp/mavros.rosinstall
+$ wstool update -t src
+$ rosdep install --from-paths src --ignore-src --rosdistro `echo $ROS_DISTRO` -y
+
+$ catkin build
+
+$ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc # if it already doesn't have
+
+$ sudo ~/catkin_ws/src/mavros/mavros/scripts/install_geographiclib_datasets.sh
+```
+
+### IQ Simulation ROS Package
+
+```
+cd ~/catkin_ws/src
+git clone https://github.com/Intelligent-Quads/iq_sim.git
+echo "GAZEBO_MODEL_PATH=$HOME/catkin_ws/src/iq_sim/models:${GAZEBO_MODEL_PATH}" >> ~/.bashrc
+```
+>Make sure that `GAZEBO_MODEL_PATH` variable in `.bashrc` will be appended to have custom simulation models from Intelligent Quads, on top of its default `/usr/share/gazebo/models` and ArduPilot-Gazebo's models
+
+### Run ROS Simulation for Drone
+
+Start Simulation environment and ArduPilot SITL:
+```
+$ roslaunch iq_sim runway.launch
+
+# in seperate terminal
+$ cp ~/catkin_ws/src/iq_sim/scripts/
+$ ./startsitl.sh
+```
+In a separate window, you can use `rostopic list` to see the ROS nodes of Gazebo broadcasting topics related to model states.
+
+Launch MAVROS communication with the Drone:
+```
+$ roslaunch iq_sim apm.launch
+```
+You will now be able to see broadcasted ROS topics regarding telemetry from the Flight Controller and inspect them using `rostopic echo` to livestream data, `rostopic info` to check message type and `rosmsg info` to check data structure of the message.
