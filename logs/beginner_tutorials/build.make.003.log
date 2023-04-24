@@ -1,0 +1,20 @@
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target _beginner_tutorials_generate_messages_check_deps_Num
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target std_msgs_generate_messages_lisp
+[  9%] Built target beginner_tutorials_generate_messages_cpp
+[ 18%] Built target beginner_tutorials_generate_messages_nodejs
+[ 36%] Built target beginner_tutorials_generate_messages_py
+[35m[1mScanning dependencies of target talker[0m
+[ 54%] Built target beginner_tutorials_generate_messages_eus
+[ 63%] Built target beginner_tutorials_generate_messages_lisp
+[35m[1mScanning dependencies of target listener[0m
+[ 72%] [32mBuilding CXX object CMakeFiles/talker.dir/src/talker.cpp.o[0m
+[ 72%] Built target beginner_tutorials_generate_messages
+[ 81%] [32mBuilding CXX object CMakeFiles/listener.dir/src/listener.cpp.o[0m
+[ 90%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/beginner_tutorials/lib/beginner_tutorials/talker[0m
+[ 90%] Built target talker
+[100%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/beginner_tutorials/lib/beginner_tutorials/listener[0m
+[100%] Built target listener

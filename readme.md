@@ -576,6 +576,81 @@ add_service_files(
 Build the package using `catkin build` and re-source the environments, and you should be able to see the newly created `beginner_tutorials/AddTwoInts` service message format inside `roscore`.
 > You **cannot** embed another `srv` file instead of an `srv`.
 
+## [Writing Publisher and Subscriber](http://wiki.ros.org/ROS/Tutorials/WritingPublisherSubscriber%28c%2B%2B%29)
+
+Download [`talker.cpp`](https://raw.github.com/ros/ros_tutorials/kinetic-devel/roscpp_tutorials/talker/talker.cpp) into `src` directory of your package:
+|Code|Description|Notes|
+|-|-|-|
+|`#include "ros/ros.h"`<br> `#include "std_msgs/String.h"`|Import ROS library|You should also import classes for the format of the message that you intend to publish.
+|`int main(argc, char **argv)`|Parameterized environment variables as input from the command line|
+|`ros::init(argc, argv, "talker")`|Initialize ROS node using environment variables|Third Argument is the name of the Node.
+|`ros::NodeHandle n;`|The main access point to command this node such as publishing, subscribing, etc...|
+|`ros::Publisher chatter_pub = n.advertise<std_msgs::String>("chatter", 1000);`|`advertise` function of the node allows you to publish on a given topic name.|  Returns a `Publisher` object that you can use to publish messages.
+|`ros::Rate loop_rate(10);`| Freequency of Loops|
+|`while(ros::ok())`| Check if the node should continue running| Return `False` if `SIGINT` is received, kicked off the network, `ros::shutdown()` is called by some other function or all `NodeHandles` has been destroyed
+|`std_msgs::String msg;`<br>`std::stringstream ss;`<br>`ss << "Hello World;`<br>`msg.data = ss.str()`<br>`ROS_INFO("%s", msg.data.c_str();`|Compose the message the publish|
+|`chatter_pub.publish(msg);`|Publish the message using the `Publisher` object|
+|`ros::spinOnce();`|Receive any callbacks (subscribed topics).|Not necessary in this case, because you are not subcribing but publishing.
+|`loop_rate.sleep();`|Wait a while before next loop to match the frequency|
+
+Download [`listener.cpp`](https://raw.github.com/ros/ros_tutorials/kinetic-devel/roscpp_tutorials/listener/listener.cpp) into `src` directory of your package:
+|Code|Description|Notes|
+|-|-|-|
+|`#include "ros/ros.h"`<br> `#include "std_msgs/String.h"`|Import ROS library|You should also import classes for the message format of the topic that you intend to subscribe to.
+|`void chatterCallback(const std_msgs::String::ConstPtr& msg)`<br>`{`<br>`ROS_INFO("I heard [%s]", msg->data.c_str())`<br>`}`|Callback function to pass arriving messages into|The message is passed as [`boost_shared_ptr`](https://www.boost.org/doc/libs/1_37_0/libs/smart_ptr/shared_ptr.htm)
+|`ros::init(argc, argv, "listener")`|Initialize ROS node using environment variables|Third Argument is the name of the Node.
+|`ros::NodeHandle n;`|The main access point to command this node such as publishing, subscribing, etc...|
+|`ros::Subscriber sub = n.subscriber("chatter", chatterCallback);`|This node will call the `chatterCallback()` function whenver it fetches a new message from `Chatter` topic|  Returns a `Publisher` object that you can use to publish messages.
+|`ros::spin();`|Enter a simple loop to process callbacks
+
+Add the following into `CMakeLists.txt` for compiling and adding dependencies: 
+```
+add_executable(talker src/talker.cpp)
+target_link_libraries(talker ${catkin_LIBRARIES})
+add_dependencies(talker beginner_tutorials_generate_messages_cpp)
+
+add_executable(listener src/listener.cpp)
+target_link_libraries(listener ${catkin_LIBRARIES})
+add_dependencies(listener beginner_tutorials_generate_messages_cpp)
+```
+
+## [Writing Simple Service and Client](http://wiki.ros.org/ROS/Tutorials/WritingServiceClient%28c%2B%2B%29)
+
+Create `add_two_ints_server.cpp` file inside `src` directory:
+|Code|Description|Notes|
+|-|-|-|
+|`#include "ros/ros.h"`<br> `#include "beginner_tutorials/AddTwoInts.h"`|Import ROS library|You should also import classes for the message format of the service, `srv`.
+|`bool add(beginner_tutorials::AddTwoInts::Request &req,`<br>`beginner_tutorials::AddTwoInts::Response &res)`<br>`{`<br>`res.sum = req.a + req.b;`<br>`ROS_INFO("request: x=%ld, y=%ld", (long int)req.a, (long int)req.b);`<br>`return true;`<br>`}`|Actual function of the service to process data|The response is stored inside a corresponding attribute of the `res` object, but not as the `return`.
+|`ros::init(argc, argv, "add_two_ints_server")`|Initialize ROS node using environment variables|Third Argument is the name of the Node.
+|`ros::NodeHandle n;`|The main access point to command this node such as publishing, subscribing, etc...|
+|`ros::ServiceServer service = n.advertiseService("add_two_ints", add);`|This node will call the `add` function whenver it receives a new request|
+|`ros::spin();`|Enter a simple loop to process callbacks/ wait for service requests
+
+Create `add_two_ints_client.cpp` file inside `src` directory:
+|Code|Description|Notes|
+|-|-|-|
+|`#include "ros/ros.h"`<br> `#include "beginner_tutorials/AddTwoInts.h"`<br>`#include <cstdlib>`|Import ROS library|You should also import classes for the format of the message that you intend to request from the service.
+|`int main(argc, char **argv)`|Parameterized environment variables as input from the command line|
+|`ros::init(argc, argv, "talker")`|Initialize ROS node using environment variables|Third Argument is the name of the Node.
+|`if(argc != 3)` <br> `{` <br> `ROS_INFO("usage: add_two_ints_client X Y");` <br> `}`|Check if there are appropriate arguments to send request with to the service.|
+|`ros::NodeHandle n;`|The main access point to command this node such as publishing, subscribing, etc...|
+|`ros::ServiceClient client = n.serviceClient<beginner_tutorials::AddTwoInts>("add_two_ints");`|Create `ServiceClient` object to call the `add_two_ints` service later|
+|`beginner_tutorials::AddTwoInts srv;`<br>`srv.request.a = atoll(argv[1]);`<br>`srv.request.b = atoll(argv[2]);`|Compose the request using the custom `srv` message format|
+|`chatter_pub.publish(msg);`|Publish the message using the `Publisher` object|
+|` if (client.call(srv))`|Call the service using the `ServiceClient` object and it returns true if it is successful|The response is stored in the `srv.response` attribute
+
+Add commands to compile and link the executables and dependencies in `CMakeLists.txt`:
+```
+add_executable(add_two_ints_server src/add_two_ints_server.cpp)
+target_link_libraries(add_two_ints_server ${catkin_LIBRARIES})
+add_dependencies(add_two_ints_server beginner_tutorials_gencpp)
+
+add_executable(add_two_ints_client src/add_two_ints_client.cpp)
+target_link_libraries(add_two_ints_client ${catkin_LIBRARIES})
+add_dependencies(add_two_ints_client beginner_tutorials_gencpp)
+```
+
+
 
 ## [Transformations](http://wiki.ros.org/tf/Tutorials)
 

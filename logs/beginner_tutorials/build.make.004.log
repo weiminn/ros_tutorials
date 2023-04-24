@@ -1,0 +1,23 @@
+[35m[1mScanning dependencies of target _beginner_tutorials_generate_messages_check_deps_AddTwoInts[0m
+[  0%] Built target std_msgs_generate_messages_cpp
+[  0%] Built target std_msgs_generate_messages_lisp
+[  0%] Built target std_msgs_generate_messages_py
+[  0%] Built target std_msgs_generate_messages_nodejs
+[  0%] Built target std_msgs_generate_messages_eus
+[  0%] Built target _beginner_tutorials_generate_messages_check_deps_Num
+[  0%] Built target _beginner_tutorials_generate_messages_check_deps_AddTwoInts
+[  5%] [34m[1mGenerating Lisp code from beginner_tutorials/AddTwoInts.srv[0m
+[ 11%] [34m[1mGenerating Python code from SRV beginner_tutorials/AddTwoInts[0m
+[ 17%] [34m[1mGenerating C++ code from beginner_tutorials/AddTwoInts.srv[0m
+[ 23%] [34m[1mGenerating Javascript code from beginner_tutorials/AddTwoInts.srv[0m
+[ 29%] [34m[1mGenerating EusLisp code from beginner_tutorials/AddTwoInts.srv[0m
+[ 35%] Built target beginner_tutorials_generate_messages_lisp
+[ 41%] Built target beginner_tutorials_generate_messages_nodejs
+[ 52%] Built target beginner_tutorials_generate_messages_eus
+[ 58%] Built target beginner_tutorials_generate_messages_cpp
+[ 76%] [34m[1mGenerating Python msg __init__.py for beginner_tutorials[0m
+[ 88%] Built target listener
+[ 88%] Built target talker
+[ 94%] [34m[1mGenerating Python srv __init__.py for beginner_tutorials[0m
+[100%] Built target beginner_tutorials_generate_messages_py
+[100%] Built target beginner_tutorials_generate_messages

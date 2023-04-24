@@ -13,7 +13,8 @@
                 "/opt/ros/noetic/include",
                 "${workspaceFolder}/src/eth_exercise/include",
                 "${workspaceFolder}/src/iq_gnc/include",
-                "${workspaceFolder}/devel/.private/mavros_msgs/include"
+                "${workspaceFolder}/devel/.private/mavros_msgs/include",
+                "${workspaceFolder}/devel/.private/beginner_tutorials/include"
             ],
             "name": "ROS",
             "intelliSenseMode": "gcc-x64",
