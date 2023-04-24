@@ -1,0 +1,6 @@
+avoidance/avoidance
+/home/weiminn/catkin_ws/devel/.private/avoidance/cmake.lock /home/weiminn/catkin_ws/devel/./cmake.lock
+/home/weiminn/catkin_ws/devel/.private/avoidance/share/avoidance/cmake/avoidanceConfig.cmake /home/weiminn/catkin_ws/devel/share/avoidance/cmake/avoidanceConfig.cmake
+/home/weiminn/catkin_ws/devel/.private/avoidance/share/avoidance/cmake/avoidanceConfig-version.cmake /home/weiminn/catkin_ws/devel/share/avoidance/cmake/avoidanceConfig-version.cmake
+/home/weiminn/catkin_ws/devel/.private/avoidance/lib/libavoidance.so /home/weiminn/catkin_ws/devel/lib/libavoidance.so
+/home/weiminn/catkin_ws/devel/.private/avoidance/lib/pkgconfig/avoidance.pc /home/weiminn/catkin_ws/devel/lib/pkgconfig/avoidance.pc

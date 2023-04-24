@@ -300,6 +300,7 @@ $ roslaunch ros_package_template ros_package_template.launch
 </package>
 
 ```
+> Dependencies (`buildtool_depend`, `build_depend` and `depend`) are pretty much the only things that matter in `package.xml`.
 
 ## CMakeLists.xml
 
@@ -309,7 +310,7 @@ For configuring the CMake build system
 |-----|-----|----|
 | `cmake_minimum_required`| Required CMake version 
 | `project` | Package Name | Usually the same value as `<name>` in `package.xml`
-| `find_package`| Find other CMake/Catkin packages needed for build
+| `find_package`| Find other CMake/Catkin packages needed for build | The convention is to `find_package` all other packages as `COMPONENTS` of `catkin REQUIRED` package.
 | `add_message_files`, `add_service_files`, `add_action_files` | Message/Service/Action generators|
 | `generate_messages` | Invoke message/service/action generation|
 | `catkin_package` | Package build export information |`INCLUDE_DIRS`, `LIBRARIES`, `CATKIN_DEPENDS`, `DEPENDS`
@@ -353,7 +354,7 @@ Keeps track of coordinate frames over time, and lets users transform points, vec
 | Print information about the current transform tree| `$ rosrun tf tf_monitor` |
 | Print information about the transform between 2 frames | `$ rosrun tf tf_echo source_frame target_frame` <br/> ``$ rosrun rviz rviz -d `rospack find turtle_tf`/rviz/turtle_rviz.rviz`` |
 
-# ROS Exercises
+# [ROS Official Tutorials](http://wiki.ros.org/ROS/Tutorials)
 
 ## [Simulating Husky](http://wiki.ros.org/husky_gazebo/Tutorials/Simulating%20Husky)
 
@@ -401,7 +402,7 @@ Change the launch file to load a different world:
 
 ```
 
-## Creating Package from Scratch
+## [Creating Package from Scratch](http://wiki.ros.org/ROS/Tutorials/CreatingPackage)
 
 Create new package with dependencies, and then inspect the `package.xml` and `CMakelists.txt`:
 ```
@@ -428,7 +429,7 @@ find_package(roscpp REQUIRED)
 find_package(sensor_msgs REQUIRED )
 
 ```
-> For catkin packages, if you find_package them as components of catkin, this is advantageous as a single set of environment variables is created with the catkin_ prefix. For example, let us say you were using the package nodelet in your code.
+> For catkin packages, if you `find_package` them as components of catkin, this is advantageous as a single set of environment variables is created with the `catkin_` prefix. 
 
 Add/Uncomment the following chunk in `CMakelists.txt` to register into dependency tree:
 ```
@@ -437,7 +438,7 @@ catkin_package(
  CATKIN_DEPENDS roscpp sensor_msgs
 )
 ```
-> `CATKIN_DEPENDS` tells the other pacakges that `find_package` our package on which dependencies are being passed along.
+> `CATKIN_DEPENDS` tells the other packages that `find_package` our package on which dependencies are being passed along.
 
 > This function must be called before declaring any targets with `add_library`, or `add_executable`.
 
@@ -481,7 +482,102 @@ target_link_libraries(${PROJECT_NAME}
 )
 ```
 
-## Transformations
+## [Services and Parameters](http://wiki.ros.org/ROS/Tutorials/UnderstandingServicesParams)
+
+### Services
+
+|Command|Description|Notes|
+|---|---|---|
+|`$ rosservice list`| Print information about active services |
+|`$ rosservice call [service] [args]`| Call the service with the provided args |
+|`$ rosservice type [service]`| Print service type | `std_srvs/Empty` type services take no argument and also return nothing <br> Use `$ rosservice type [service] \| grep rossrv show` to view the structure of the message if available|
+|`$ rosservice find`| Find services by service type |
+|`$ rosservice uri`| Print service ROSRPC uri |
+
+### Parameters
+
+A parameter server is a shared, multi-variate dictionary that is accessible via network APIs. Nodes use this server to store and retrieve parameters at runtime. As it is not designed for high-performance, it is best used for static, non-binary data such as configuration parameters. It is meant to be globally viewable so that tools can easily inspect the configuration state of the system and modify if necessary.
+
+|Command|Description|Notes|
+|---|---|---|
+|`$ rosparam list`| List parameter names | Parameters are named using the normal ROS naming convention. This means that ROS parameters have a hierarchy that matches the namespaces used for topics and nodes. This hierarchy is meant to protect parameter names from colliding.
+|`$ rosparam get [param_name]`| Get parameter value | `$ rosparam get /` shows contents of the entire Parameter server. <br> Multiple parameter values are returned as a dictionary.
+|`$ rosparam set [param_name] [value]`| Set parameter to value|
+|`$ rosparam dump [file]`| Save paramters into file | The parameters are usually stored in `.yaml` files.|
+|`$ rosparam load [file] [namespace]`| Load param files into namespace | 
+|`$ rosparam delete`| Delete parameter |
+
+## [Custom Message and Services formats](http://wiki.ros.org/ROS/Tutorials/CreatingMsgAndSrv)
+
+### Creating a `msg` message format
+
+Navigate into a ROS package and create `msg` directory, and create `.msg` file in there:
+```
+$ cd ros_pacakge
+$ mkdir msg
+$ echo "int64 num" > msg/Num.msg
+```
+Insert tags for compiling message formats in `package.xml`:
+```
+<build_depend>message_generation</build_depend>
+<exec_depend>message_runtime</exec_depend>
+```
+
+Insert dependencies for `msg` compilations in `CMakeLists.txt`, by modifying `find_package` and `catkin_package` respectively:
+```
+# inside find_package
+std_msgs
+message_generation
+
+# inside catkin_package
+catkin_package(
+  ...
+  CATKIN_DEPENDS message_runtime ...
+  ...)
+```
+
+Insert the command to compile our custom `msg` files in `CMakeLists.txt`:
+```
+add_message_files(
+  FILES
+  Num.msg
+)
+```
+
+Uncomment `generate_messages` macro in `CMakeLists.txt`:
+```
+generate_messages(
+  DEPENDENCIES
+  std_msgs  # Or other packages containing msgs
+)
+```
+
+Build the package using `catkin build` and re-source the environments, and you should be able to see the newly created `beginner_tutorials/Num` message inside `roscore`.
+
+### Creating custom `srv` message format
+
+Create `srv` folder inside a catkin package, and copy a sample service over from `rospy_tutorials` package:
+```
+$ cd catkin_ws/ros_package
+$ mkdir srv
+$ roscp rospy_tutorials AddTwoInts.srv srv/AddTwoInts.srv
+```
+
+Add same dependencies as with `msg` into `package.xml` and `CMakeLists.txt`.
+
+Uncomment following line inside `CMakeLists.txt` to compile the custom service message format files:
+```
+add_service_files(
+  FILES
+  AddTwoInts.srv
+)
+```
+
+Build the package using `catkin build` and re-source the environments, and you should be able to see the newly created `beginner_tutorials/AddTwoInts` service message format inside `roscore`.
+> You **cannot** embed another `srv` file instead of an `srv`.
+
+
+## [Transformations](http://wiki.ros.org/tf/Tutorials)
 
 ### [Static Transform Broadcaster](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20static%20broadcaster%20%28C%2B%2B%29)
 
@@ -951,4 +1047,76 @@ int init_publisher_subscriber(ros::NodeHandle controlnode)
 ```
 
 
-### Waypoint mission
+# [Obstacle Avoidance with ROS PX4](https://github.com/PX4/PX4-Avoidance)
+
+## Setup
+
+### Download and Install PX4 and Avoidance Package
+
+Clone PX4 Avoidance package into your catkin source directory and build it:
+```
+$ cd ~/catkin_ws/src
+$ git clone https://github.com/PX4/avoidance.git
+$ cd ..
+$ catkin build
+```
+
+Clone PX4 Firmware (not into your catkin but somewhere else):
+```
+$ cd ~
+$ git clone https://github.com/PX4/Firmware.git --recursive
+$ cd ~/Firmware
+
+# Install PX4 "common" dependencies.
+$ ./Tools/setup/ubuntu.sh --no-sim-tools --no-nuttx
+
+# Gstreamer plugins (for Gazebo camera)
+$ sudo apt install gstreamer1.0-plugins-bad gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-ugly libgstreamer-plugins-base1.0-dev
+
+# Build and run simulation, and quit with ctrl+c after building succeeds
+$ make px4_sitl_default gazebo 
+
+# Setup some more Gazebo-related environment variables (modify this line based on the location of the Firmware folder on your machine)
+$ . ~/Firmware/Tools/simulation/gazebo/setup_gazebo.bash ~/Firmware ~/Firmware/build/px4_sitl_default
+
+```
+
+### Setup Environment
+
+Make sure you reset all the environment variables in `~/.bashrc` before the sourcing happens:
+```
+unset GAZEBO_MASTER_URI
+unset GAZEBO_MODEL_DATABASE_URI
+unset GAZEBO_RESOURCE_PATH
+unset GAZEBO_PLUGIN_PATH
+unset GAZEBO_MODEL_PATH
+unset LD_LIBRARY_PATH
+unset OGRE_RESOURCE_PATH
+```
+
+And add the code for sourcings after the resets:
+```
+# for ROS
+source /opt/ros/noetic/setup.bash
+source ~/catkin_ws/devel/setup.bash
+
+# for Gazebo Model
+export GAZEBO_MODEL_PATH=/home/weiminn/gazebo_models
+source /usr/share/gazebo/setup.sh
+export GAZEBO_MODEL_PATH=/home/weiminn/catkin_ws/src/iq_sim/models:${GAZEBO_MODEL_PATH}
+
+# for PX4
+px4_dir=/home/weiminn/Firmware
+source $px4_dir/Tools/simulation/gazebo-classic/setup_gazebo.bash $px4_dir $px4_dir/build/px4_sitl_default
+export ROS_PACKAGE_PATH=${ROS_PACKAGE_PATH}:$px4_dir
+export GAZEBO_MODEL_PATH=/home/weiminn/catkin_ws/src/avoidance/avoidance/sim/models:/home/weiminn/catkin_ws/src/avoidance/avoidance/sim/worlds:${GAZEBO_MODEL_PATH}
+```
+
+## Run Local Planner
+
+Go to `avoidance_sitl_mavros.launch` and set `<arg name="gui" default="false"/>` to `true`.
+
+Afterwards, you can launch the simulation via:
+```
+$ roslaunch local_planner local_planner_sitl_3cam.launch
+```
