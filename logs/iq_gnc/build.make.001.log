@@ -1,7 +1,0 @@
-[35m[1mScanning dependencies of target avoidance[0m
-[ 50%] Built target square
-[ 50%] Built target set_wp
-[ 75%] Built target gnc_example
-[ 87%] [32mBuilding CXX object CMakeFiles/avoidance.dir/src/avoidance_sol.cpp.o[0m
-[100%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/iq_gnc/lib/iq_gnc/avoidance[0m
-[100%] Built target avoidance

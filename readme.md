@@ -332,6 +332,8 @@ For configuring the CMake build system
 
 > In C++, you need `NodeHandle` to get instances of Publishers and Subscribers whereas in Python, you can call `rospy` library directly.
 
+> Namespace is the Package name.
+
 ## Parameter Server
 
 Nodes can use *parameter server* to store and retrieve configuration parameters at runtime. The parameters are defined in separate YAML files, and configured in `package.launch` file.
@@ -650,8 +652,6 @@ target_link_libraries(add_two_ints_client ${catkin_LIBRARIES})
 add_dependencies(add_two_ints_client beginner_tutorials_gencpp)
 ```
 
-
-
 ## [Transformations](http://wiki.ros.org/tf/Tutorials)
 
 ### [Static Transform Broadcaster](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20static%20broadcaster%20%28C%2B%2B%29)
@@ -663,59 +663,20 @@ $ catkin_create_pkg learning_tf2 tf2 tf2_ros roscpp rospy turtlesim
 $ roscd learning_tf2
 ```
 
-Broadcaster code:
-```
-#include <ros/ros.h>
-#include <tf2_ros/static_transform_broadcaster.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <cstdio>
-#include <tf2/LinearMath/Quaternion.h>
-
-
-std::string static_turtle_name;
-
-int main(int argc, char **argv)
-{
-  ros::init(argc,argv, "my_static_tf2_broadcaster");
-  if(argc != 8)
-  {
-    ROS_ERROR("Invalid number of parameters\nusage: static_turtle_tf2_broadcaster child_frame_name x y z roll pitch yaw");
-    return -1;
-  }
-  if(strcmp(argv[1],"world")==0)
-  {
-    ROS_ERROR("Your static turtle name cannot be 'world'");
-    return -1;
-
-  }
-
-  // Name of the turtle, arbitrary for now
-  // Cos you're not tracking any running turtle instance yet
-  static_turtle_name = argv[1];
-
-  // Broadcaster object to send transformations over the wire
-  static tf2_ros::StaticTransformBroadcaster static_broadcaster;
-  geometry_msgs::TransformStamped static_transformStamped;
-
-  // Content of messages to broadcast
-  static_transformStamped.header.stamp = ros::Time::now();
-  static_transformStamped.header.frame_id = "world";
-  static_transformStamped.child_frame_id = static_turtle_name;
-  static_transformStamped.transform.translation.x = atof(argv[2]);
-  static_transformStamped.transform.translation.y = atof(argv[3]);
-  static_transformStamped.transform.translation.z = atof(argv[4]);
-  tf2::Quaternion quat;
-  quat.setRPY(atof(argv[5]), atof(argv[6]), atof(argv[7]));
-  static_transformStamped.transform.rotation.x = quat.x();
-  static_transformStamped.transform.rotation.y = quat.y();
-  static_transformStamped.transform.rotation.z = quat.z();
-  static_transformStamped.transform.rotation.w = quat.w();
-  static_broadcaster.sendTransform(static_transformStamped);
-  ROS_INFO("Spinning until killed publishing %s to world", static_turtle_name.c_str());
-  ros::spin();
-  return 0;
-};
-```
+Static Broadcaster code:
+|Code |Description
+|--|--
+|`#include <ros/ros.h>`<br>`#include <tf2_ros/static_transform_broadcaster.h>`<br>`#include <geometry_msgs/TransformStamped.h>`<br>`#include <cstdio>`<br>`#include <tf2/LinearMath/Quaternion.h>`|Import `TransformStamped` and `Quaternion` message formats for sending Transformations and `StaticTransformBroadcaster` class to broadcast the transform
+|`if(argc != 8)`<br>`{`<br>`ROS_ERROR("Invalid number of parameters\nusage: static_turtle_tf2_broadcaster`<br>`child_frame_name x y z roll pitch yaw");`<br>`return -1;`<br>`}`<br>`if(strcmp(argv[1],"world")==0)`<br>`{`<br>`ROS_ERROR("Your static turtle name cannot be 'world'");`<br>`return -1;`<br>`}`<br>|Count the arguments for x, y, z, Roll, Pitch and Yaw to broadcast staticly.
+|`std::string static_turtle_name = argv[1];`|Name of the Turtle is arbitrary for now, cos you're not tracking any running turtle instance yet.
+|`static tf2_ros::StaticTransformBroadcaster static_broadcaster;`|Create `StaticTransformBroadcaster` object to use handle the publishing of coordinate frames
+|`geometry_msgs::TransformStamped static_transformStamped;`|Create `TransformStamped` object to package transformation messages
+|`static_transformStamped.header.stamp = ros::Time::now();`<br>`static_transformStamped.header.frame_id = "world";`<br>`static_transformStamped.child_frame_id = static_turtle_name;`|Metadata for Transformation message
+|<br>`static_transformStamped.transform.translation.x = atof(argv[2]);`<br>`static_transformStamped.transform.translation.y = atof(argv[3]);`<br>`static_transformStamped.transform.translation.z = atof(argv[4]);`<br>| Positional Content of the message (x,y,z)|
+|`tf2::Quaternion quat;`<br>`quat.setRPY(atof(argv[5]), atof(argv[6]), atof(argv[7]));`<br>`static_transformStamped.transform.rotation.x = quat.x();`<br>`static_transformStamped.transform.rotation.y = quat.y();`<br>`static_transformStamped.transform.rotation.z = quat.z();`<br>`static_transformStamped.transform.rotation.w = quat.w();`|Angular Content of the message (roll, pitch yaw)|
+|`static_broadcaster.sendTransform(static_transformStamped);`|Broadcast the static transformation|
+|`ros::spin()`|Wait for callback/block from exiting in this case
+> You are not publishin or subscribing anything, so you don't need `NodeHandle`.
 
 Modify `CMakeLists.txt` to export and link executables:
 ```
@@ -732,69 +693,40 @@ $ roscore
 # Seperate terminal tab
 $ source ~/.bashrc
 $ rosrun learning_tf2 static_turtle_tf2_broadcaster mystaticturtle 0 0 1 0 0 0
+
+# Listen to static broadcast topic
+$ rostopic echo /tf_static
 ```
 
 ### [Tranformation Broadcaster](http://wiki.ros.org/tf2/Tutorials/Writing%20a%20tf2%20static%20broadcaster%20%28C%2B%2B%29)
 
-Code for Transformation Broadcaster:
+#### Broadcaster code
 
-```
-#include <ros/ros.h>
-#include <tf2/LinearMath/Quaternion.h>
-#include <tf2_ros/transform_broadcaster.h>
-#include <geometry_msgs/TransformStamped.h>
-#include <turtlesim/Pose.h>
+Imports:
+|Code |Description
+|--|--
+|`#include <ros/ros.h>`<br>`#include <tf2_ros/transform_broadcaster.h>`<br>`#include <geometry_msgs/TransformStamped.h>`<br>`#include <tf2/LinearMath/Quaternion.h>`<br>`#include <turtlesim/Pose.h>`|Import `TransformStamped` and `Quaternion` message formats for send Transformations and `TransformBroadcaster` class to broadcast the transform
 
-std::string turtle_name;
 
-void poseCallback(const turtlesim::PoseConstPtr& msg){
+Callback function to receive pose subscription of the turtle instance:
+|Code |Description
+|--|--
+|`void poseCallback(const turtlesim::PoseConstPtr& msg){`| Get `Pose` message published by Simulator node
+|`static tf2_ros::TransformBroadcaster br`|Create `TransformBroadcaster` object to use handle the publishing of coordinate frames
+|`geometry_msgs::TransformStamped transformStamped;`|Create `TransformStamped` object to package transformation messages
+|`transformStamped.header.stamp = ros::Time::now();`<br>`transformStamped.header.frame_id = "world";`<br>`transformStamped.child_frame_id = turtle_name;`|Metadata for Transformation message
+|<br>`transformStamped.transform.translation.x = msg->x;`<br>`transformStamped.transform.translation.y = msg->y;`<br>`transformStamped.transform.translation.z = msg->z;`<br>| Positional Content of the message (x,y,z)|
+|`tf2::Quaternion quat;`<br>`quat.setRPY(0, 0, msg->theta);`<br>`transformStamped.transform.rotation.x = quat.x();`<br>`transformStamped.transform.rotation.y = quat.y();`<br>`transformStamped.transform.rotation.z = quat.z();`<br>`transformStamped.transform.rotation.w = quat.w();`|Angular Content of the message (roll, pitch yaw)|
+|`br.sendTransform(transformStamped);`|Broadcast the transformation|
 
-    // Broadcaster object to send transformations over the wire
-    static tf2_ros::TransformBroadcaster br;
+Main function of Broadcaster node:
+|Code |Description
+|--|--
+|`ros::init(argc, argv, "my_tf2_broadcaster");`|Initialize ROS Node
+|`ros::NodeHandle private_node("~");`<br>`private_node.getParam("turtle", turtle_name);`|Access Private Parameters assigned to the node
+|`ros::NodeHandle node;`<br>`ros::Subscriber sub = node.subscribe(turtle_name+"/pose", 10, &poseCallback);`| Subscribe to the pose of the turtle running
+|`ros::spin()`|Wait for callback
 
-    // Metadata for message to broadcast
-    geometry_msgs::TransformStamped transformStamped;
-    transformStamped.header.stamp = ros::Time::now();
-    transformStamped.header.frame_id = "world";
-    transformStamped.child_frame_id = turtle_name;
-    
-    // Content of messages to broadcast
-    transformStamped.transform.translation.x = msg->x;
-    transformStamped.transform.translation.y = msg->y;
-    transformStamped.transform.translation.z = 0.0;
-    tf2::Quaternion q;
-    q.setRPY(0, 0, msg->theta);
-    transformStamped.transform.rotation.x = q.x();
-    transformStamped.transform.rotation.y = q.y();
-    transformStamped.transform.rotation.z = q.z();
-    transformStamped.transform.rotation.w = q.w();
-
-    br.sendTransform(transformStamped);
-}
-
-int main(int argc, char** argv){
-    ros::init(argc, argv, "my_tf2_broadcaster");
-    ros::NodeHandle private_node("~");
-
-    // get name of the turtle you wanna track
-    if(!private_node.hasParam("turtle")){
-        if(argc != 2) {
-            ROS_ERROR("need turtle name as argument");
-            return -1;
-        }
-        turtle_name = argv[1];
-    } else {
-        private_node.getParam("turtle", turtle_name);
-    }
-
-    // subscribe the pose of the turtle running
-    ros::NodeHandle node;
-    ros::Subscriber sub = node.subscribe(turtle_name+"/pose", 10, &poseCallback);
-
-    ros::spin();
-    return 0;
-}
-```
 
 Add executables path and link between compiled bin and libraries to compile in ``CMakelists.txt``, and then run `catkin build` and resource bash:
 ```
@@ -965,6 +897,11 @@ Add listener node to `start_demo.launch`:
 
 Change the behavior of the `turtle2` to follow `carrot1` instead of `turtle1`:
 ```
+# TransformListener receives transformation messages and buffers them for up to 10 seconds
+tf2_ros::Buffer tfBuffer;
+tf2_ros::TransformListener tfListener(tfBuffer);
+
+# Retrieve the latest transform message from the buffer
 transformStamped = tfBuffer.lookupTransform(
                     "turtle2", // source (relative to)
                     // "turtle1", // old target 
@@ -991,15 +928,31 @@ transformStamped = tfBuffer.lookupTransform(
 The advanced API with overloaded `lookupTransform` with 6 arguments:
 
 <ol>
-<li>Get the transformation from this frame</li>
-<li>at this time</li>
-<li>to this frame</li>
-<li>at this time</li>
-<li>Specify the frame that does not change over time, usually "/world"</li>
-<li>timeout for exception</li>
+    <li>Get the transformation from this frame</li>
+    <li>at this time</li>
+    <li>to this frame</li>
+    <li>at this time</li>
+    <li>Specify the frame that does not change over time, usually "/world"</li>
+    <li>timeout for exception</li>
 </ol>
 
-<!-- ### [Sensor Messages with TF2](http://wiki.ros.org/tf2/Tutorials/Using%20stamped%20datatypes%20with%20tf2%3A%3AMessageFilter) -->
+### [Sensor Messages with TF2](http://wiki.ros.org/tf2/Tutorials/Using%20stamped%20datatypes%20with%20tf2%3A%3AMessageFilter)
+
+Create the following message filter code add the `message_filter.cpp` to `CMakeList.txt` instructions:
+|Code|Description
+|-|-|
+|`#include "ros/ros.h"`<br>`#include "geometry_msgs/PointStamped.h"`<br>`#include "tf2_ros/transform_listener.h"`<br>`#include "tf2_ros/message_filter.h"`<br>`#include "message_filters/subscriber.h"`<br>`#include "tf2_geometry_msgs/tf2_geometry_msgs.h"`|Import `MessageFilter` to subscribe to any ROS message with a header and cache it until it is possible to transform it into the target frame|
+|`private:`<br>`std::string target_frame_;`<br>`tf2_ros::Buffer buffer_`<br>`tf2_ros::TransformListener tf2_;`<br>`message_filters::Subscriber<geometry_msgs::PointStamped> point_sub_;`<br>`tf2_ros::MessageFilter<geometry_msgs::PointStamped> tf2_filter_;`<br>`ros::NodeHandle n_;`|Create Persistent instances of `Buffer`, `TransformListener`, and `MessageFilter`|
+|`PoseDrawer() :`<br>`tf2_(buffer_),  target_frame_("turtle1"),`<br>`tf2_filter_(point_sub_, buffer_, target_frame_, 10, 0)`|Initialize the instances of `TransformListener` and `MessageFilter`
+|`point_sub_.subscribe(n_, "turtle_point_stamped", 10);`<br>`tf2_filter_.registerCallback( boost::bind(&PoseDrawer::msgCallback, this, _1) );`|Subscribe the `MessageFilter` instance to `turtle_point_stamped` topic, and register callback function for it
+
+Afterwards, you can launch the `turtle_tf2` project to test the filter:
+```
+$ roslaunch turtle_tf2 turtle_tf2_sensor.launch 
+
+# another terminal
+$ rosrun learning_tf2 message_filter
+```
 
 # ROS for Drones
 

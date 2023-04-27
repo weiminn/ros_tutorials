@@ -140,6 +140,7 @@ add_executable(static_turtle_tf2_broadcaster src/static_turtle_tf2_broadcaster.c
 add_executable(turtle_tf2_broadcaster src/turtle_tf2_broadcaster.cpp)
 add_executable(turtle_tf2_listener src/turtle_tf2_listener.cpp)
 add_executable(frame_tf2_broadcaster src/frame_tf2_broadcaster.cpp)
+add_executable(message_filter src/message_filter.cpp)
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
@@ -166,6 +167,9 @@ target_link_libraries(turtle_tf2_listener
  ${catkin_LIBRARIES}
 )
 target_link_libraries(frame_tf2_broadcaster
+ ${catkin_LIBRARIES}
+)
+target_link_libraries(message_filter
  ${catkin_LIBRARIES}
 )
 #############
