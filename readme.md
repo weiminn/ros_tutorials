@@ -1001,7 +1001,7 @@ $ catkin build
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc # if it already doesn't have
 
 # Install Geographic libraries
-$ sudo apt-get install libgeographic-dev geographiclib-tools
+$ sudo apt-get install libgeographic-dev geographiclib-tools ros-noetic-geographic-msgs
 $ sudo ~/catkin_ws/src/mavros/mavros/scripts/install_geographiclib_datasets.sh
 ```
 
