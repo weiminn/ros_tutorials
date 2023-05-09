@@ -1,0 +1,5 @@
+Symlinking /home/weiminn/catkin_ws/devel/share/eth_exercise/cmake/eth_exerciseConfig-version.cmake
+Symlinking /home/weiminn/catkin_ws/devel/share/eth_exercise/cmake/eth_exerciseConfig.cmake
+Symlinking /home/weiminn/catkin_ws/devel/lib/libeth_exercise_core.so
+Symlinking /home/weiminn/catkin_ws/devel/lib/eth_exercise/eth_exercise
+Symlinking /home/weiminn/catkin_ws/devel/lib/pkgconfig/eth_exercise.pc

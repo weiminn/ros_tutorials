@@ -1,0 +1,20 @@
+[35m[1mScanning dependencies of target frame_tf2_broadcaster[0m
+[35m[1mScanning dependencies of target static_turtle_tf2_broadcaster[0m
+[35m[1mScanning dependencies of target turtle_tf2_broadcaster[0m
+[35m[1mScanning dependencies of target message_filter[0m
+[35m[1mScanning dependencies of target turtle_tf2_listener[0m
+[ 10%] [32mBuilding CXX object CMakeFiles/frame_tf2_broadcaster.dir/src/frame_tf2_broadcaster.cpp.o[0m
+[ 20%] [32mBuilding CXX object CMakeFiles/turtle_tf2_broadcaster.dir/src/turtle_tf2_broadcaster.cpp.o[0m
+[ 30%] [32mBuilding CXX object CMakeFiles/turtle_tf2_listener.dir/src/turtle_tf2_listener.cpp.o[0m
+[ 40%] [32mBuilding CXX object CMakeFiles/message_filter.dir/src/message_filter.cpp.o[0m
+[ 50%] [32mBuilding CXX object CMakeFiles/static_turtle_tf2_broadcaster.dir/src/static_turtle_tf2_broadcaster.cpp.o[0m
+[ 60%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/frame_tf2_broadcaster[0m
+[ 60%] Built target frame_tf2_broadcaster
+[ 70%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/static_turtle_tf2_broadcaster[0m
+[ 80%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/turtle_tf2_broadcaster[0m
+[ 80%] Built target static_turtle_tf2_broadcaster
+[ 80%] Built target turtle_tf2_broadcaster
+[ 90%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/turtle_tf2_listener[0m
+[ 90%] Built target turtle_tf2_listener
+[100%] [32m[1mLinking CXX executable /home/weiminn/catkin_ws/devel/.private/learning_tf2/lib/learning_tf2/message_filter[0m
+[100%] Built target message_filter

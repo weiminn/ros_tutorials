@@ -1,0 +1,15 @@
+In file included from [01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/src/nodes/global_planner_node.cpp:1[m[K:
+[01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/include/global_planner/global_planner_node.h:28:10:[m[K [01;31m[Kfatal error: [m[Koctomap_msgs/Octomap.h: No such file or directory
+   28 | #include [01;31m[K<octomap_msgs/Octomap.h>[m[K
+      |          [01;31m[K^~~~~~~~~~~~~~~~~~~~~~~~[m[K
+compilation terminated.
+make[2]: *** [CMakeFiles/global_planner.dir/build.make:102: CMakeFiles/global_planner.dir/src/nodes/global_planner_node.cpp.o] Error 1
+make[2]: *** Waiting for unfinished jobs....
+In file included from [01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/include/global_planner/global_planner.h:27[m[K,
+                 from [01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/src/library/global_planner.cpp:1[m[K:
+[01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/include/global_planner/search_tools.h:[m[K In function ‘[01m[Kbool global_planner::reverseSearch(GlobalPlanner*, const global_planner::Cell&)[m[K’:
+[01m[K/home/weiminn/catkin_ws/src/avoidance/global_planner/include/global_planner/search_tools.h:262:1:[m[K [01;35m[Kwarning: [m[Kno return statement in function returning non-void [[01;35m[K-Wreturn-type[m[K]
+  262 | [01;35m[K}[m[K
+      | [01;35m[K^[m[K
+make[1]: *** [CMakeFiles/Makefile2:1457: CMakeFiles/global_planner.dir/all] Error 2
+make: *** [Makefile:141: all] Error 2

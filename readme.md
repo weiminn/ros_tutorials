@@ -990,12 +990,18 @@ $ rosinstall_generator --upstream mavros | tee /tmp/mavros.rosinstall
 $ rosinstall_generator mavlink | tee -a /tmp/mavros.rosinstall
 $ wstool merge -t src /tmp/mavros.rosinstall
 $ wstool update -t src
+
+# do this step before cloning PX4 obstacle avoidance submodule
 $ rosdep install --from-paths src --ignore-src --rosdistro `echo $ROS_DISTRO` -y
 
+# copy build config file which was somehow deleted in the master branch
+$ cp config.h.in src/mavlink/config.h.in
 $ catkin build
 
 $ echo "source ~/catkin_ws/devel/setup.bash" >> ~/.bashrc # if it already doesn't have
 
+# Install Geographic libraries
+$ sudo apt-get install libgeographic-dev geographiclib-tools
 $ sudo ~/catkin_ws/src/mavros/mavros/scripts/install_geographiclib_datasets.sh
 ```
 

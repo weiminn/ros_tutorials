@@ -1,0 +1,8 @@
+Symlinking /home/weiminn/catkin_ws/devel/share/learning_tf2/cmake/learning_tf2Config-version.cmake
+Symlinking /home/weiminn/catkin_ws/devel/share/learning_tf2/cmake/learning_tf2Config.cmake
+Symlinking /home/weiminn/catkin_ws/devel/lib/learning_tf2/message_filter
+Symlinking /home/weiminn/catkin_ws/devel/lib/learning_tf2/frame_tf2_broadcaster
+Symlinking /home/weiminn/catkin_ws/devel/lib/learning_tf2/turtle_tf2_listener
+Symlinking /home/weiminn/catkin_ws/devel/lib/learning_tf2/static_turtle_tf2_broadcaster
+Symlinking /home/weiminn/catkin_ws/devel/lib/learning_tf2/turtle_tf2_broadcaster
+Symlinking /home/weiminn/catkin_ws/devel/lib/pkgconfig/learning_tf2.pc
