@@ -1,0 +1,16 @@
+[submodule "avoidance"]
+    path = src/avoidance
+    url = https://github.com/PX4/PX4-Avoidance.git
+
+[submodule "iq_sim"]
+    path = src/iq_sim
+    url = https://github.com/Intelligent-Quads/iq_sim.git
+
+[submodule "iq_gnc"]
+    path = src/iq_gnc
+    url = https://github.com/Intelligent-Quads/iq_gnc.git
+
+[submodule "ros_best_practices"]
+    path = src/ros_best_practices
+    url = https://github.com/leggedrobotics/ros_best_practices
+
