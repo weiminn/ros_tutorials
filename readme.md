@@ -676,7 +676,7 @@ Static Broadcaster code:
 |`tf2::Quaternion quat;`<br>`quat.setRPY(atof(argv[5]), atof(argv[6]), atof(argv[7]));`<br>`static_transformStamped.transform.rotation.x = quat.x();`<br>`static_transformStamped.transform.rotation.y = quat.y();`<br>`static_transformStamped.transform.rotation.z = quat.z();`<br>`static_transformStamped.transform.rotation.w = quat.w();`|Angular Content of the message (roll, pitch yaw)|
 |`static_broadcaster.sendTransform(static_transformStamped);`|Broadcast the static transformation|
 |`ros::spin()`|Wait for callback/block from exiting in this case
-> You are not publishin or subscribing anything, so you don't need `NodeHandle`.
+> You are not publishin or subscribing anything, so you don't need `NodeHandle`; you only "broadcast" the static transformation.
 
 Modify `CMakeLists.txt` to export and link executables:
 ```

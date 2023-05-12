@@ -1,0 +1,5 @@
+telemetry
+/home/weiminn/catkin_ws/devel/.private/telemetry/cmake.lock /home/weiminn/catkin_ws/devel/./cmake.lock
+/home/weiminn/catkin_ws/devel/.private/telemetry/share/telemetry/cmake/telemetryConfig-version.cmake /home/weiminn/catkin_ws/devel/share/telemetry/cmake/telemetryConfig-version.cmake
+/home/weiminn/catkin_ws/devel/.private/telemetry/share/telemetry/cmake/telemetryConfig.cmake /home/weiminn/catkin_ws/devel/share/telemetry/cmake/telemetryConfig.cmake
+/home/weiminn/catkin_ws/devel/.private/telemetry/lib/pkgconfig/telemetry.pc /home/weiminn/catkin_ws/devel/lib/pkgconfig/telemetry.pc
