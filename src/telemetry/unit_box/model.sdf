@@ -14,7 +14,7 @@
         </inertia>
         <pose>0 0 0 0 -0 0</pose>
       </inertial>
-      <pose>2.5 2.5 -0 0 -0 0</pose>
+      <pose>0 0 -0 0 -0 0</pose>
       <gravity>1</gravity>
       <self_collide>0</self_collide>
       <kinematic>0</kinematic>
@@ -23,7 +23,7 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
-            <size>1 1 1</size>
+            <size>2 2 2</size>
           </box>
         </geometry>
         <material>
@@ -49,7 +49,8 @@
         <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
-            <size>1 1 1</size>
+            <size>2 2 2</size>
+            <!-- <size>0 0 0</size> -->
           </box>
         </geometry>
         <surface>
